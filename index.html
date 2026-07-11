@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Runner - Retro Cyber Arcade</title>
+    <meta name="description" content="A premium offline synthwave browser runner game built with vanilla HTML, CSS, and JS.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Ambient retro glow orbs -->
+    <div class="ambient-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <!-- Main Game Wrapper -->
+    <div class="game-wrapper">
+        <!-- Game Viewport Container -->
+        <div class="game-container" id="game-container">
+            
+            <!-- Twinkling stars in sky -->
+            <div class="star" style="top: 15%; left: 10%; width: 2px; height: 2px; animation: twinkle 3s infinite ease-in-out;"></div>
+            <div class="star" style="top: 25%; left: 35%; width: 3px; height: 3px; animation: twinkle 4s infinite ease-in-out 1s;"></div>
+            <div class="star" style="top: 10%; left: 55%; width: 2px; height: 2px; animation: twinkle 2.5s infinite ease-in-out 0.5s;"></div>
+            <div class="star" style="top: 30%; left: 75%; width: 3px; height: 3px; animation: twinkle 5s infinite ease-in-out 1.5s;"></div>
+            <div class="star" style="top: 18%; left: 90%; width: 2px; height: 2px; animation: twinkle 3.5s infinite ease-in-out 2s;"></div>
+
+            <!-- Synthwave Glowing Sun -->
+            <div class="synthwave-sun"></div>
+
+            <!-- Parallax Mountain Backgrounds -->
+            <div class="mountains-far"></div>
+            <div class="mountains-near"></div>
+
+            <!-- Ground with scrolling grid -->
+            <div class="ground" id="ground">
+                <div class="grid-lines" id="grid-lines"></div>
+            </div>
+
+            <!-- Dinosaur Character -->
+            <div class="dino" id="dino">
+                <svg id="dino-svg" viewBox="0 0 60 60">
+                    <!-- Dinosaur Shadow -->
+                    <ellipse class="dino-shadow" cx="30" cy="55" rx="16" ry="3" fill="rgba(0, 0, 0, 0.4)"/>
+                    <g class="dino-body">
+                        <!-- Tail -->
+                        <path d="M 8 28 Q 16 38 24 34 Q 30 30 30 22 L 32 14 L 48 14 Q 52 14 52 18 L 52 24 Q 52 28 48 28 L 42 28 L 36 34 Q 34 44 26 44 Q 18 44 8 28" fill="var(--neon-cyan)"/>
+                        <!-- Dark eye recess -->
+                        <circle cx="44" cy="19" r="2.5" fill="#0d081f"/>
+                        <!-- Glowing eye center -->
+                        <circle class="dino-eye-glow" cx="44" cy="19" r="1.2" fill="#ffffff"/>
+                        <!-- Cute T-Rex Arm -->
+                        <path d="M 38 34 Q 42 34 44 37" fill="none" stroke="var(--neon-cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                    <!-- Left Leg (Background) -->
+                    <g class="leg-left">
+                        <path d="M 24 43 V 52 H 28" fill="none" stroke="var(--neon-cyan)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+                    </g>
+                    <!-- Right Leg (Foreground) -->
+                    <g class="leg-right">
+                        <path d="M 30 43 V 52 H 34" fill="none" stroke="var(--neon-cyan)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Obstacles Container -->
+            <div class="obstacles-container" id="obstacles-container"></div>
+
+            <!-- Canvas for particle effects (dust, landing sparks, game over explosion) -->
+            <canvas id="particle-canvas"></canvas>
+
+            <!-- HUD Panel (Current Score, High Score, Level Indicator, Audio Control) -->
+            <div class="hud">
+                <div class="hud-left">
+                    <div class="hud-panel glass-panel">
+                        <span class="hud-label">SCORE</span>
+                        <span class="hud-val" id="score-val">00000</span>
+                    </div>
+                    <div class="hud-panel glass-panel">
+                        <span class="hud-label">HI-SCORE</span>
+                        <span class="hud-val" id="high-score-val">00000</span>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="hud-panel glass-panel level-panel">
+                        <span class="hud-label">LVL</span>
+                        <span class="hud-val" id="level-val">1</span>
+                    </div>
+                    <button class="audio-btn glass-panel" id="audio-btn" aria-label="Toggle Sound">
+                        <!-- Sound ON icon -->
+                        <svg class="sound-on-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                        <!-- Sound OFF icon (hidden by default) -->
+                        <svg class="sound-off-icon hidden" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Start / Game Over Overlay Screen -->
+            <div class="screen-overlay" id="screen-overlay">
+                <div class="screen-content glass-panel">
+                    <h1 class="screen-title" id="screen-title">NEON RUNNER</h1>
+                    <p class="screen-message" id="screen-message">Dodge obstacles and survive in a glowing synthwave landscape.</p>
+                    
+                    <!-- Stats panel shown during game over -->
+                    <div class="game-over-stats hidden" id="game-over-stats">
+                        <div class="stat-box">
+                            <span class="stat-label">Final Score</span>
+                            <span class="stat-value" id="final-score">0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">High Score</span>
+                            <span class="stat-value" id="final-high-score">0</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="action-btn">
+                        <span id="btn-text">START RUN</span>
+                        <svg id="btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </button>
+
+                    <div class="controls-guide">
+                        <div class="guide-item">
+                            <span class="key-badge">Space</span> or <span class="key-badge">↑</span>
+                            <span class="guide-desc">Jump</span>
+                        </div>
+                        <div class="guide-item mobile-only">
+                            <span class="key-badge">Tap Screen</span>
+                            <span class="guide-desc">Jump</span>
+                        </div>
+                        <div class="guide-item">
+                            <span class="key-badge">Enter</span>
+                            <span class="guide-desc">Restart</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Flash Effect Layer -->
+            <div class="flash-layer" id="flash-layer"></div>
+        </div>
+    </div>
+
+    <!-- Small info footer -->
+    <div class="game-info-footer">
+        <span>Offline Mode Enabled</span>
+        <div class="dot"></div>
+        <span>Antigravity Arcade</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
