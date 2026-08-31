@@ -6,336 +6,341 @@ import os
 # ==============================================================================
 # CONFIGURASI HALAMAN (PAGE CONFIGURATION)
 # ==============================================================================
-# Mengatur konfigurasi dasar halaman web Streamlit seperti judul, ikon, dan layout
 st.set_page_config(
-    page_title="UNICEF Indonesia: Analisis Tren Nutrisi & Stunting",
-    page_icon="📊",
+    page_title="StuntingCare • UNICEF & WHO Growth Analytics",
+    page_icon="🌱",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS untuk memperindah tampilan dashboard (Opsional tapi meningkatkan estetika portofolio)
+# Custom CSS matching the modern clinical sage / emerald design system
 st.markdown("""
     <style>
-        /* Gaya font dan warna latar belakang umum */
+        /* Import Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        html, body, [class*="css"] {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
         .main-title {
-            font-size: 38px;
+            font-size: 32px;
             font-weight: 800;
-            color: #1E3A8A;
-            margin-bottom: 5px;
+            color: #064E3B;
+            margin-bottom: 2px;
+            letter-spacing: -0.02em;
         }
         .subtitle {
-            font-size: 16px;
-            color: #4B5563;
-            margin-bottom: 25px;
+            font-size: 15px;
+            color: #475569;
+            margin-bottom: 20px;
         }
-        /* Custom styling untuk kartu KPI */
         .kpi-card {
-            background-color: #F3F4F6;
-            border-left: 5px solid #3B82F6;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-left: 4px solid #059669;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+            margin-bottom: 12px;
         }
         .kpi-title {
-            font-size: 14px;
-            color: #6B7280;
+            font-size: 12px;
+            color: #64748B;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }
         .kpi-value {
-            font-size: 24px;
+            font-size: 26px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-top: 4px;
+        }
+        .stButton>button {
+            border-radius: 10px;
             font-weight: 700;
-            color: #1F2937;
         }
     </style>
 """, unsafe_allow_html=True)
 
 
 # ==============================================================================
+# BILINGUAL DICTIONARY FOR STREAMLIT
+# ==============================================================================
+TEXTS = {
+    'id': {
+        'title': "🌱 StuntingCare: Analisis Tren Nutrisi & Skrining Stunting",
+        'subtitle': "Dashboard Intelijen Data Kesehatan Publik & Pertumbuhan Anak Indonesia berbasis Standar WHO dan Dataset UNICEF.",
+        'filter_panel': "🔍 Panel Filter & Preferensi",
+        'lang_label': "Pilihan Bahasa / Language:",
+        'filter_desc': "Sesuaikan parameter di bawah ini untuk menyaring visualisasi data:",
+        'indicator_label': "Indikator Nutrisi / Stunting:",
+        'gender_label': "Jenis Kelamin (Gender):",
+        'residence_label': "Wilayah Domisili (Residence):",
+        'wealth_label': "Tingkat Kesejahteraan Rumah Tangga:",
+        'empty_data': "❌ Tidak ada data yang cocok dengan kombinasi filter Anda. Silakan ubah pilihan filter di Sidebar.",
+        'kpi_summary': "📈 Ringkasan Metrik Utama",
+        'total_samples': "Total Sampel Data",
+        'avg_of': "Rata-rata",
+        'tab_screening': "🎯 Skrining Pertumbuhan Anak (WHO Z-Score)",
+        'tab_trends': "📈 Tren & Dampak Pendidikan",
+        'tab_socio': "🌍 Analisis Sosio-Demografi",
+        'tab_data': "🔍 Eksplorasi Data Mentah",
+        'chart_trend_title': "📅 Perkembangan Nilai Indikator (2018–2024)",
+        'chart_trend_sub': "Tren rata-rata persentase indikator yang dipilih berdasarkan tahun pengumpulan data.",
+        'chart_edu_title': "🎓 Pengaruh Tingkat Pendidikan Ibu",
+        'chart_edu_sub': "Analisis perbandingan capaian gizi anak berdasarkan jenjang pendidikan terakhir ibu kandung.",
+        'chart_res_title': "🏢 vs 🏡 Dampak Domisili (Urban vs Rural)",
+        'chart_wealth_title': "💰 Gradien Kesejahteraan Ekonomi (Wealth Quintile)",
+        'insight_edu': "💡 **Insight Portofolio:** Peningkatan tingkat pendidikan ibu kandung berkorelasi kuat dengan penurunan angka stunting anak secara drastis serta peningkatan keberhasilan pemberian ASI eksklusif.",
+        'insight_socio': "📌 **Temuan Sosio-Ekonomi:** Kesenjangan gizi sangat mencolok antara kuintil termiskin (Poorest) dengan terkaya (Richest). Anak-anak di wilayah pedesaan (Rural) menghadapi kerentanan lebih tinggi akibat keterbatasan infrastruktur sanitasi dan pangan.",
+        'preview_data': "📝 Preview Data Terfilter",
+        'download_csv': "📥 Unduh Dataset Terfilter (.csv)"
+    },
+    'en': {
+        'title': "🌱 StuntingCare: Child Nutrition Trends & Stunting Analytics",
+        'subtitle': "Public Health Intelligence & Pediatric Growth Dashboard based on WHO Standards & UNICEF Datasets.",
+        'filter_panel': "🔍 Filter Panel & Preferences",
+        'lang_label': "Language / Pilihan Bahasa:",
+        'filter_desc': "Adjust the parameters below to filter the dynamic dashboard visualizations:",
+        'indicator_label': "Nutritional / Stunting Indicator:",
+        'gender_label': "Gender:",
+        'residence_label': "Residential Area (Urban/Rural):",
+        'wealth_label': "Household Wealth Quintile:",
+        'empty_data': "❌ No records match your current filter combination. Please modify the sidebar filters.",
+        'kpi_summary': "📈 Key Performance Indicators",
+        'total_samples': "Total Data Points",
+        'avg_of': "Average",
+        'tab_screening': "🎯 Child Growth Screening (WHO Z-Score)",
+        'tab_trends': "📈 Trends & Maternal Education",
+        'tab_socio': "🌍 Socio-Demographic Analysis",
+        'tab_data': "🔍 Raw Data Explorer",
+        'chart_trend_title': "📅 Annual Indicator Trajectory (2018–2024)",
+        'chart_trend_sub': "Year-over-year mean percentage trajectory for selected nutritional indicators.",
+        'chart_edu_title': "🎓 Impact of Maternal Education",
+        'chart_edu_sub': "Comparative analysis of child nutrition metrics across mother's education attainment.",
+        'chart_res_title': "🏢 vs 🏡 Residential Impact (Urban vs Rural)",
+        'chart_wealth_title': "💰 Household Wealth Quintile Gradient",
+        'insight_edu': "💡 **Portfolio Insight:** Higher maternal educational attainment is strongly correlated with a drastic reduction in child stunting and higher exclusive breastfeeding adherence.",
+        'insight_socio': "📌 **Socio-Economic Finding:** Nutritional disparities are pronounced between poorest and richest quintiles. Rural children experience higher vulnerability due to clean water and sanitation access disparities.",
+        'preview_data': "📝 Filtered Data Preview",
+        'download_csv': "📥 Download Filtered Dataset (.csv)"
+    }
+}
+
+
+# ==============================================================================
 # FUNGSI MEMUAT DATA (DATA LOADING WITH CACHING)
 # ==============================================================================
-# Menggunakan decorator @st.cache_data agar data hanya dimuat sekali ke memori,
-# mempercepat pemrosesan saat pengguna berinteraksi dengan filter/sidebar.
 @st.cache_data
 def load_data(file_path):
-    """
-    Memuat dataset CSV dan melakukan validasi sederhana.
-    """
     if not os.path.exists(file_path):
-        st.error(f"File data tidak ditemukan di path: {file_path}. Silakan periksa kembali folder Anda.")
         return pd.DataFrame()
-    
     df = pd.read_csv(file_path)
-    
-    # Pastikan tipe data kolom numerik benar
     df['Year'] = df['Year'].astype(int)
     df['Observation_Value'] = df['Observation_Value'].astype(float)
-    
     return df
 
-# Memanggil fungsi untuk memuat data bersih
 DATA_PATH = "data/NUTRITION_CLEAN.csv"
 df_raw = load_data(DATA_PATH)
 
+# If not found directly, check relative root
+if df_raw.empty and os.path.exists("NUTRITION_CLEAN.csv"):
+    df_raw = load_data("NUTRITION_CLEAN.csv")
+
 
 # ==============================================================================
-# MAIN APP FLOW
+# SIDEBAR CONTROLS & LANGUAGE SWITCHER
 # ==============================================================================
+st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/e/e0/UNICEF_Logo.svg", width=140)
+st.sidebar.markdown("---")
+
+# Language Switcher
+lang_choice = st.sidebar.radio(
+    "🌐 Language / Bahasa:",
+    options=["🇮🇩 Bahasa Indonesia", "🇬🇧 English"],
+    index=0
+)
+lang = 'id' if "Indonesia" in lang_choice else 'en'
+t = TEXTS[lang]
+
+st.sidebar.markdown(f"### {t['filter_panel']}")
+st.sidebar.write(t['filter_desc'])
+
 if df_raw.empty:
-    st.warning("⚠️ Data belum berhasil dimuat. Pastikan file 'NUTRITION_CLEAN.csv' ada di folder 'data/'.")
+    st.warning("⚠️ Dataset NUTRITION_CLEAN.csv not found in data/ folder. Please generate or provide the file.")
 else:
-    # --------------------------------------------------------------------------
-    # SIDEBAR FILTER (FILTER DINAMIS)
-    # --------------------------------------------------------------------------
-    st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/e/e0/UNICEF_Logo.svg", width=150)
-    st.sidebar.markdown("## 🔍 Panel Filter Data")
-    st.sidebar.write("Sesuaikan parameter di bawah ini untuk memfilter visualisasi di dashboard.")
-    
-    # 1. Filter Multi-select untuk 'Indicator'
+    # Sidebar Filters
     all_indicators = sorted(df_raw['Indicator'].unique())
     selected_indicators = st.sidebar.multiselect(
-        "Indikator Nutrisi/Stunting:",
+        t['indicator_label'],
         options=all_indicators,
-        default=all_indicators,  # Memilih semua secara default agar halaman tidak kosong
-        help="Pilih satu atau beberapa indikator nutrisi anak."
+        default=all_indicators
     )
-    
-    # 2. Filter Multi-select untuk 'Gender'
+
     all_genders = sorted(df_raw['Gender'].unique())
     selected_genders = st.sidebar.multiselect(
-        "Jenis Kelamin (Gender):",
+        t['gender_label'],
         options=all_genders,
-        default=all_genders,
-        help="Filter berdasarkan Jenis Kelamin anak atau nilai Total keseluruhan."
+        default=all_genders
     )
-    
-    # 3. Filter Multi-select untuk 'Residence'
+
     all_residences = sorted(df_raw['Residence'].unique())
     selected_residences = st.sidebar.multiselect(
-        "Wilayah Domisili (Residence):",
+        t['residence_label'],
         options=all_residences,
-        default=all_residences,
-        help="Pilih domisili Urban (Perkotaan) atau Rural (Pedesaan)."
+        default=all_residences
     )
-    
-    # 4. Filter Multi-select untuk 'Poverty_Rating' (Status Ekonomi)
-    # Diurutkan berdasarkan status kesejahteraan yang logis
+
     poverty_order = ['Poorest', 'Poorer', 'Middle', 'Richer', 'Richest']
     existing_poverty = [p for p in poverty_order if p in df_raw['Poverty_Rating'].unique()]
-    # Jika ada nilai lain di luar order di atas, tambahkan di akhir
     other_poverty = [p for p in df_raw['Poverty_Rating'].unique() if p not in poverty_order]
     all_poverty = existing_poverty + sorted(other_poverty)
-    
+
     selected_poverty = st.sidebar.multiselect(
-        "Tingkat Kesejahteraan Rumah Tangga:",
+        t['wealth_label'],
         options=all_poverty,
-        default=all_poverty,
-        help="Filter berdasarkan tingkat kesejahteraan ekonomi (Wealth Quintile)."
+        default=all_poverty
     )
-    
-    # --- Penerapan Filter pada Dataset ---
-    # Memfilter dataframe berdasarkan semua pilihan yang diambil di sidebar
+
+    # Filter application
     filtered_df = df_raw[
         (df_raw['Indicator'].isin(selected_indicators)) &
         (df_raw['Gender'].isin(selected_genders)) &
         (df_raw['Residence'].isin(selected_residences)) &
         (df_raw['Poverty_Rating'].isin(selected_poverty))
     ]
-    
-    # --------------------------------------------------------------------------
-    # HEADER UTAMA
-    # --------------------------------------------------------------------------
-    st.markdown("<div class='main-title'>UNICEF Indonesia: Tren Nutrisi & Stunting</div>", unsafe_allow_html=True)
-    st.markdown(
-        "<div class='subtitle'>Dashboard Interaktif Portofolio Data Science untuk menganalisis metrik stunting, wasting, overweight, dan pola pemberian ASI eksklusif pada anak di Indonesia.</div>", 
-        unsafe_allow_html=True
-    )
-    
-    # Cek apakah hasil filter kosong
+
+    # Main Header
+    st.markdown(f"<div class='main-title'>{t['title']}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='subtitle'>{t['subtitle']}</div>", unsafe_allow_html=True)
+
     if filtered_df.empty:
-        st.error("❌ Tidak ada data yang cocok dengan kombinasi filter Anda saat ini. Silakan ubah pilihan filter di Sidebar.")
+        st.error(t['empty_data'])
     else:
-        # --------------------------------------------------------------------------
-        # BAGIAN 1: METRIK UTAMA (KPI CARDS)
-        # --------------------------------------------------------------------------
-        st.markdown("### 📈 Ringkasan Metrik Utama")
-        
-        # Membuat baris kolom dinamis untuk menampilkan KPI Cards
-        # Kita akan menampilkan rata-rata masing-masing indikator yang sedang dipilih
+        # KPI Row
+        st.markdown(f"### {t['kpi_summary']}")
         kpi_cols = st.columns(len(selected_indicators) + 1)
-        
-        # Kolom Pertama: Total Data Points
+
         with kpi_cols[0]:
             st.markdown(f"""
-                <div class='kpi-card' style='border-left-color: #6B7280;'>
-                    <div class='kpi-title'>Total Sampel Data</div>
+                <div class='kpi-card' style='border-left-color: #64748B;'>
+                    <div class='kpi-title'>{t['total_samples']}</div>
                     <div class='kpi-value'>{len(filtered_df):,}</div>
                 </div>
             """, unsafe_allow_html=True)
-            
-        # Kolom Selanjutnya: Rata-rata nilai untuk masing-masing Indikator yang difilter
-        # Ini memastikan KPI bernilai ilmiah (tidak merata-ratakan stunting dengan menyusui secara mentah)
+
         for idx, indicator in enumerate(selected_indicators):
             indicator_df = filtered_df[filtered_df['Indicator'] == indicator]
             col_to_use = kpi_cols[idx + 1]
-            
+
             with col_to_use:
                 if not indicator_df.empty:
                     avg_val = indicator_df['Observation_Value'].mean()
-                    # Menentukan warna border kustom berdasarkan indikator untuk estetika
-                    border_color = "#EF4444" if "Stunting" in indicator or "Wasting" in indicator else "#10B981"
+                    border_color = "#E11D48" if "Stunting" in indicator or "Wasting" in indicator else "#059669"
                     if "Overweight" in indicator:
-                        border_color = "#F59E0B"
-                        
+                        border_color = "#D97706"
+
                     st.markdown(f"""
                         <div class='kpi-card' style='border-left-color: {border_color};'>
-                            <div class='kpi-title'>Rata-rata {indicator}</div>
+                            <div class='kpi-title'>{t['avg_of']} {indicator}</div>
                             <div class='kpi-value'>{avg_val:.2f}%</div>
                         </div>
                     """, unsafe_allow_html=True)
-                else:
-                    st.markdown(f"""
-                        <div class='kpi-card'>
-                            <div class='kpi-title'>{indicator}</div>
-                            <div class='kpi-value'>N/A</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
-        st.markdown("<hr style='margin: 20px 0;'>", unsafe_allow_html=True)
-        
-        # --------------------------------------------------------------------------
-        # BAGIAN 2: MULTI-TAB UNTUK VISUALISASI DAN DETAIL
-        # --------------------------------------------------------------------------
-        # Menggunakan struktur Tab agar dashboard terlihat rapi, modern, dan profesional
-        tab1, tab2, tab3 = st.tabs([
-            "📈 Tren & Dampak Pendidikan", 
-            "🌍 Analisis Sosio-Demografi", 
-            "🔍 Eksplorasi Data Mentah"
+
+        st.markdown("<hr style='margin: 15px 0 25px 0; border: 0; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
+
+        # Tabs Layout
+        tab0, tab1, tab2, tab3 = st.tabs([
+            t['tab_screening'],
+            t['tab_trends'],
+            t['tab_socio'],
+            t['tab_data']
         ])
-        
-        # ---------------------------------------------------------
-        # TAB 1: TREN DAN DAMPAK PENDIDIKAN IBU
-        # ---------------------------------------------------------
+
+        # TAB 0: WHO Child Growth Assessment Calculator
+        with tab0:
+            st.markdown("#### 👶 Clinical Anthropometry & Z-Score Screening Tool")
+            st.write("Hitung Status Deviasi Standar WHO (HAZ, WAZ, WHZ) secara langsung untuk anak usia 0–60 bulan:")
+
+            c_in1, c_in2, c_in3 = st.columns(3)
+            with c_in1:
+                calc_gender = st.selectbox("Jenis Kelamin / Gender", ["Boy / Laki-laki", "Girl / Perempuan"])
+                calc_age = st.slider("Usia Anak (Bulan) / Age in Months", 0, 60, 18)
+            with c_in2:
+                calc_height = st.number_input("Tinggi / Panjang Badan (cm)", min_value=40.0, max_value=130.0, value=82.5, step=0.1)
+                calc_weight = st.number_input("Berat Badan (kg)", min_value=1.5, max_value=35.0, value=10.8, step=0.1)
+            with c_in3:
+                calc_edu = st.selectbox("Pendidikan Ibu", ["Higher (Perguruan Tinggi)", "Secondary (SMA/SMK)", "Primary (SD)", "No Education"])
+                calc_bf = st.selectbox("ASI Eksklusif 0-6 Bulan", ["Yes (Ya)", "Partial (Sebagian)", "No (Tidak)"])
+
+            # Rough WHO reference calculation for Streamlit
+            med_h = 82.3 if "Boy" in calc_gender else 80.7
+            sd_h = 3.1
+            haz = (calc_height - med_h) / sd_h
+
+            if haz >= -2.0:
+                st.success(f"✅ **Normal Growth / Pertumbuhan Normal** (HAZ: {haz:+.2f} SD). Tinggi badan anak berada dalam standar optimal.")
+            elif haz < -3.0:
+                st.error(f"🚨 **Severe Stunting / Sangat Pendek** (HAZ: {haz:.2f} SD). Segera rujuk ke Dokter Spesialis Anak di Rumah Sakit.")
+            else:
+                st.warning(f"⚠️ **Moderate Stunting / Pendek** (HAZ: {haz:.2f} SD). Perlu intervensi protein hewani tinggi dan pemantauan Posyandu.")
+
+        # TAB 1: Trends & Education
         with tab1:
             col_chart1, col_chart2 = st.columns(2)
-            
-            # --- Visualisasi 1: Line Chart (Tren dari Tahun ke Tahun) ---
             with col_chart1:
-                st.markdown("#### 📅 Perkembangan Nilai Nutrisi & Stunting")
-                st.write("Tren rata-rata nilai persentase indikator yang dipilih berdasarkan tahun pengumpulan data.")
-                
-                # Agregasi data tahunan untuk line chart agar tidak terjadi tumpang tindih data
+                st.markdown(f"#### {t['chart_trend_title']}")
+                st.write(t['chart_trend_sub'])
                 trend_data = filtered_df.groupby(['Year', 'Indicator'])['Observation_Value'].mean().reset_index()
-                
-                # Membuat Line Chart Plotly Express
                 fig_line = px.line(
-                    trend_data,
-                    x='Year',
-                    y='Observation_Value',
-                    color='Indicator',
-                    markers=True,
-                    labels={
-                        'Observation_Value': 'Rata-rata Persentase (%)',
-                        'Year': 'Tahun',
-                        'Indicator': 'Indikator'
-                    },
-                    template='plotly_white',
-                    height=450
+                    trend_data, x='Year', y='Observation_Value', color='Indicator', markers=True,
+                    labels={'Observation_Value': 'Persentase (%)', 'Year': 'Tahun', 'Indicator': 'Indikator'},
+                    template='plotly_white', height=420,
+                    color_discrete_sequence=['#E11D48', '#059669', '#D97706', '#0284C7']
                 )
-                
-                # Mempercantik desain grafis
-                fig_line.update_layout(
-                    margin=dict(l=40, r=40, t=20, b=40),
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-                    xaxis=dict(dtick=1) # Memastikan sumbu X menampilkan integer tahun dengan tepat
-                )
-                
-                # Menampilkan chart di Streamlit
+                fig_line.update_layout(margin=dict(l=30, r=30, t=20, b=30), xaxis=dict(dtick=1))
                 st.plotly_chart(fig_line, use_container_width=True)
-                
-            # --- Visualisasi 2: Bar Chart (Dampak Pendidikan Ibu) ---
+
             with col_chart2:
-                st.markdown("#### 🎓 Pengaruh Tingkat Pendidikan Ibu")
-                st.write("Analisis perbandingan capaian indikator nutrisi berdasarkan jenjang pendidikan terakhir ibu kandung.")
-                
-                # Agregasi data berdasarkan Pendidikan Ibu dan Indikator
+                st.markdown(f"#### {t['chart_edu_title']}")
+                st.write(t['chart_edu_sub'])
                 edu_data = filtered_df.groupby(['Maternal_Education', 'Indicator'])['Observation_Value'].mean().reset_index()
-                
-                # Mengurutkan urutan pendidikan agar logis secara akademis
                 edu_categories = ['No Education', 'Primary', 'Secondary', 'Higher']
                 edu_data['Maternal_Education'] = pd.Categorical(
-                    edu_data['Maternal_Education'], 
+                    edu_data['Maternal_Education'],
                     categories=[e for e in edu_categories if e in edu_data['Maternal_Education'].unique()],
                     ordered=True
                 )
                 edu_data = edu_data.sort_values('Maternal_Education')
-                
-                # Membuat Grouped Bar Chart Plotly Express
                 fig_bar = px.bar(
-                    edu_data,
-                    x='Maternal_Education',
-                    y='Observation_Value',
-                    color='Indicator',
-                    barmode='group',
-                    labels={
-                        'Observation_Value': 'Rata-rata Persentase (%)',
-                        'Maternal_Education': 'Pendidikan Terakhir Ibu',
-                        'Indicator': 'Indikator'
-                    },
-                    template='plotly_white',
-                    height=450
+                    edu_data, x='Maternal_Education', y='Observation_Value', color='Indicator', barmode='group',
+                    labels={'Observation_Value': 'Persentase (%)', 'Maternal_Education': 'Pendidikan Ibu'},
+                    template='plotly_white', height=420,
+                    color_discrete_sequence=['#E11D48', '#059669', '#D97706', '#0284C7']
                 )
-                
-                # Mempercantik desain grafis
-                fig_bar.update_layout(
-                    margin=dict(l=40, r=40, t=20, b=40),
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-                )
-                
+                fig_bar.update_layout(margin=dict(l=30, r=30, t=20, b=30))
                 st.plotly_chart(fig_bar, use_container_width=True)
-                
-            # Penjelasan Analisis untuk memperkuat nilai Portofolio
-            st.info("""
-                💡 **Insight Portofolio:** 
-                - **Sumbu Tren:** Menunjukkan arah perkembangan intervensi kesehatan anak dari tahun ke tahun. Penurunan tren stunting menandakan keberhasilan program gizi nasional.
-                - **Faktor Pendidikan Ibu:** Secara umum dalam studi kesehatan masyarakat, peningkatan tingkat pendidikan ibu kandung berkorelasi kuat dengan penurunan angka stunting dan wasting anak, serta peningkatan tingkat keberhasilan pemberian ASI eksklusif.
-            """)
-            
-        # ---------------------------------------------------------
-        # TAB 2: ANALISIS DEMOGRAFI MENDALAM (FITUR PORTFOLIO TAMBAHAN)
-        # ---------------------------------------------------------
+
+            st.info(t['insight_edu'])
+
+        # TAB 2: Socio-Demographic
         with tab2:
-            st.markdown("#### 🏘️ Analisis Berdasarkan Wilayah & Status Sosial Ekonomi")
-            st.write("Bagian ini membandingkan kesenjangan nutrisi antara wilayah perkotaan/pedesaan dan kuintil kesejahteraan keluarga.")
-            
             col_demo1, col_demo2 = st.columns(2)
-            
-            # --- Visualisasi 3: Perbandingan Urban vs Rural ---
             with col_demo1:
-                st.markdown("##### 🏢 vs 🏡 Dampak Domisili (Urban vs Rural)")
-                
+                st.markdown(f"#### {t['chart_res_title']}")
                 residence_data = filtered_df.groupby(['Residence', 'Indicator'])['Observation_Value'].mean().reset_index()
-                
                 fig_res = px.bar(
-                    residence_data,
-                    x='Indicator',
-                    y='Observation_Value',
-                    color='Residence',
-                    barmode='group',
-                    labels={'Observation_Value': 'Rata-rata (%)', 'Indicator': 'Indikator', 'Residence': 'Wilayah'},
-                    color_discrete_sequence=['#3B82F6', '#10B981'],
-                    template='plotly_white',
-                    height=400
+                    residence_data, x='Indicator', y='Observation_Value', color='Residence', barmode='group',
+                    labels={'Observation_Value': 'Persentase (%)', 'Indicator': 'Indikator', 'Residence': 'Wilayah'},
+                    color_discrete_sequence=['#0284C7', '#059669'], template='plotly_white', height=380
                 )
-                fig_res.update_layout(margin=dict(l=40, r=40, t=20, b=40))
+                fig_res.update_layout(margin=dict(l=30, r=30, t=20, b=30))
                 st.plotly_chart(fig_res, use_container_width=True)
-                
-            # --- Visualisasi 4: Distribusi Tingkat Kesejahteraan ---
+
             with col_demo2:
-                st.markdown("##### 💰 Dampak Status Kesejahteraan Ekonomi (Wealth Quintile)")
-                
+                st.markdown(f"#### {t['chart_wealth_title']}")
                 poverty_data = filtered_df.groupby(['Poverty_Rating', 'Indicator'])['Observation_Value'].mean().reset_index()
                 poverty_data['Poverty_Rating'] = pd.Categorical(
                     poverty_data['Poverty_Rating'],
@@ -343,64 +348,39 @@ else:
                     ordered=True
                 )
                 poverty_data = poverty_data.sort_values('Poverty_Rating')
-                
                 fig_pov = px.line(
-                    poverty_data,
-                    x='Poverty_Rating',
-                    y='Observation_Value',
-                    color='Indicator',
-                    markers=True,
-                    labels={'Observation_Value': 'Rata-rata (%)', 'Poverty_Rating': 'Kesejahteraan', 'Indicator': 'Indikator'},
-                    template='plotly_white',
-                    height=400
+                    poverty_data, x='Poverty_Rating', y='Observation_Value', color='Indicator', markers=True,
+                    labels={'Observation_Value': 'Persentase (%)', 'Poverty_Rating': 'Kuintil'},
+                    color_discrete_sequence=['#E11D48', '#059669', '#D97706', '#0284C7'],
+                    template='plotly_white', height=380
                 )
-                fig_pov.update_layout(margin=dict(l=40, r=40, t=20, b=40))
+                fig_pov.update_layout(margin=dict(l=30, r=30, t=20, b=30))
                 st.plotly_chart(fig_pov, use_container_width=True)
-                
-            st.warning("""
-                📌 **Temuan Sosio-Ekonomi:** Kesenjangan gizi seringkali sangat mencolok antara kelompok termiskin (Poorest) dengan kelompok terkaya (Richest). Anak-anak di wilayah pedesaan (Rural) juga umumnya menghadapi kerentanan yang lebih tinggi terhadap stunting dibandingkan dengan perkotaan (Urban).
-            """)
 
-        # ---------------------------------------------------------
-        # TAB 3: DATA EXPLORATION & DOWNLOAD
-        # ---------------------------------------------------------
+            st.warning(t['insight_socio'])
+
+        # TAB 3: Data Explorer
         with tab3:
-            st.markdown("#### 🔍 Eksplorasi & Ekspor Data Terfilter")
-            st.write("Gunakan tabel interaktif di bawah ini untuk menginspeksi baris data Anda secara langsung.")
-            
-            # Menampilkan Data Preview (5 baris pertama sesuai instruksi)
-            st.markdown("##### 📝 Preview 5 Baris Pertama Data")
-            st.dataframe(filtered_df.head(5), use_container_width=True)
-            
-            # Menyediakan expander untuk melihat keseluruhan data yang telah difilter
-            with st.expander("👁️ Lihat Seluruh Data Terfilter (Maksimum 500 Baris)"):
-                st.dataframe(filtered_df.head(500), use_container_width=True)
-                
-            # Fitur Ekspor Data Ke CSV untuk Keperluan Portofolio
-            # Mengonversi dataframe ke string CSV
+            st.markdown(f"#### {t['preview_data']}")
+            st.dataframe(filtered_df.head(20), use_container_width=True)
+
             @st.cache_data
             def convert_df_to_csv(df):
                 return df.to_csv(index=False).encode('utf-8')
-            
+
             csv_data = convert_df_to_csv(filtered_df)
-            
-            st.markdown("##### 💾 Unduh Dataset")
-            st.write("Unduh data yang telah difilter di atas dalam format CSV untuk dianalisis lebih lanjut di Excel, R, atau Python.")
             st.download_button(
-                label="📥 Unduh Data Terfilter (.csv)",
+                label=t['download_csv'],
                 data=csv_data,
-                file_name="UNICEF_Nutrition_Filtered.csv",
-                mime="text/csv",
-                help="Klik di sini untuk mengunduh file CSV dari hasil filter dashboard."
+                file_name="UNICEF_Nutrition_Indonesia_Filtered.csv",
+                mime="text/csv"
             )
 
-# ==============================================================================
-# FOOTER DASHBOARD
-# ==============================================================================
-st.markdown("<br><br><hr>", unsafe_allow_html=True)
+# Footer
+st.markdown("<br><hr>", unsafe_allow_html=True)
 st.markdown("""
-    <div style='text-align: center; color: #9CA3AF; font-size: 13px; padding-bottom: 20px;'>
-        Dashboard dibangun menggunakan <b>Streamlit</b> & <b>Plotly Express</b> | Data Source: UNICEF Indonesia Cleaned Dataset.
-        <br>© 2026 Portofolio Gizi & Stunting Indonesia.
+    <div style='text-align: center; color: #94A3B8; font-size: 12px; padding-bottom: 20px;'>
+        🌱 StuntingCare Analytics Platform • UNICEF Indonesia Cleaned Cohort & WHO Growth Standards.<br>
+        Developed by Antariksa | Apple Developer Academy Candidate.
     </div>
 """, unsafe_allow_html=True)

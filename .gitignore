@@ -1,0 +1,19 @@
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Streamlit
+.streamlit/
+
+# Data files (Abaikan file CSV besar agar tidak memberatkan GitHub)
+data/*.csv
+data/*.xlsx
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editors
+.vscode/
+.idea/

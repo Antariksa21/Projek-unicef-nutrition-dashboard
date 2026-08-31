@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StuntingCare • WHO Child Growth & Nutrition Analytics</title>
+    <meta name="description" content="A clinical-grade child stunting screening, WHO growth standard analytics, and public health nutrition dashboard.">
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-surface text-slate-800 antialiased">
+
+    <!-- Top Announcement / Credential Bar -->
+    <aside class="credential-bar" aria-label="Project Credential Bar">
+        <div class="container-fluid flex items-center justify-between py-1.5 px-4 text-xs font-medium">
+            <div class="flex items-center gap-2 text-emerald-800">
+                <span class="badge-pulse"></span>
+                <span data-i18n="top_bar_badge">WHO & UNICEF Child Growth Screening Framework</span>
+                <span class="text-slate-300">|</span>
+                <span class="hidden sm:inline text-slate-600" data-i18n="top_bar_sub">Evidence-based Pediatric Anthropometry & Public Health Intelligence</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-slate-500 hidden md:inline" data-i18n="author_credit">Built by Antariksa</span>
+                <a href="https://github.com/Antariksa21/Projek-unicef-nutrition-dashboard" target="_blank" rel="noopener noreferrer" class="link-github flex items-center gap-1 text-slate-700 hover:text-emerald-700">
+                    <i data-lucide="github" class="w-3.5 h-3.5"></i>
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Navigation Header -->
+    <header class="main-header sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div class="container-fluid flex items-center justify-between h-16 px-4 md:px-8">
+            
+            <!-- Brand Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="logo-icon bg-emerald-600 text-white p-2 rounded-xl shadow-sm flex items-center justify-center">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="brand-title font-bold text-lg text-slate-900 tracking-tight">StuntingCare</span>
+                        <span class="badge-ver font-semibold text-[10px] uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-2 py-0.5 rounded-full">v2.4 HealthTech</span>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-none" data-i18n="brand_tagline">Child Growth Analytics & Stunting Screening Platform</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs (Desktop) -->
+            <nav class="hidden md:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
+                <button type="button" class="nav-tab active" data-tab="tab-screening" id="tab-btn-screening">
+                    <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+                    <span data-i18n="nav_assessment">Growth Assessment</span>
+                </button>
+                <button type="button" class="nav-tab" data-tab="tab-analytics" id="tab-btn-analytics">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    <span data-i18n="nav_macro_analytics">Public Health Analytics</span>
+                </button>
+                <button type="button" class="nav-tab" data-tab="tab-guidelines" id="tab-btn-guidelines">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span data-i18n="nav_guidelines">WHO Standards & Guidelines</span>
+                </button>
+            </nav>
+
+            <!-- Action Controls: Language Switcher & Print Action -->
+            <div class="flex items-center gap-2.5">
+                
+                <!-- Language Toggle Switcher -->
+                <div class="lang-switch-wrapper flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80" role="group" aria-label="Language Selector">
+                    <button type="button" class="lang-btn active" id="lang-id" data-lang="id" title="Bahasa Indonesia">
+                        <span class="flag-icon">🇮🇩</span>
+                        <span class="lang-text font-semibold text-xs">ID</span>
+                    </button>
+                    <button type="button" class="lang-btn" id="lang-en" data-lang="en" title="English">
+                        <span class="flag-icon">🇬🇧</span>
+                        <span class="lang-text font-semibold text-xs">EN</span>
+                    </button>
+                </div>
+
+                <!-- Print / Export Report Button -->
+                <button type="button" id="btn-quick-print" class="btn-secondary hidden sm:flex items-center gap-1.5 text-xs font-semibold py-2 px-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors" title="Print / Export Report">
+                    <i data-lucide="printer" class="w-4 h-4 text-slate-600"></i>
+                    <span data-i18n="btn_print_summary">Print Report</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button type="button" id="mobile-menu-toggle" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100" aria-label="Toggle navigation">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Dropdown -->
+        <nav class="mobile-nav-panel hidden md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1" id="mobile-nav-menu">
+            <button type="button" class="mobile-nav-link active w-full flex items-center gap-2 py-2 px-3 rounded-lg text-sm font-medium" data-tab="tab-screening">
+                <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+                <span data-i18n="nav_assessment">Growth Assessment</span>
+            </button>
+            <button type="button" class="mobile-nav-link w-full flex items-center gap-2 py-2 px-3 rounded-lg text-sm font-medium" data-tab="tab-analytics">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                <span data-i18n="nav_macro_analytics">Public Health Analytics</span>
+            </button>
+            <button type="button" class="mobile-nav-link w-full flex items-center gap-2 py-2 px-3 rounded-lg text-sm font-medium" data-tab="tab-guidelines">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+                <span data-i18n="nav_guidelines">WHO Standards & Guidelines</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="main-body max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-8">
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: CHILD GROWTH ASSESSMENT & PREDICTION SCREENING -->
+        <!-- ========================================================================= -->
+        <section id="tab-screening" class="tab-content active space-y-6">
+            
+            <!-- Hero / Clinical Overview Banner -->
+            <div class="hero-card bg-gradient-to-br from-emerald-900 via-slate-900 to-teal-950 text-white rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl space-y-3">
+                    <div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-1 rounded-full text-xs font-semibold tracking-wide">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        <span data-i18n="hero_pill">Clinical Anthropometry & Stunting Risk Screening</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white" data-i18n="hero_title">
+                        Individual Child Growth & Stunting Assessment
+                    </h1>
+                    <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-normal" data-i18n="hero_desc">
+                        Accurately evaluate height-for-age, weight-for-age, and acute malnutrition risk against WHO Child Growth Standards (0–60 months). Calibrated with socio-demographic indicators to provide personalized nutritional interventions.
+                    </p>
+                    
+                    <!-- Quick Preset Demos for Recruiter / HR Testing -->
+                    <div class="pt-2 flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-medium text-slate-300" data-i18n="demo_preset_label">Quick Demo Profiles:</span>
+                        <button type="button" class="btn-demo-preset" data-preset="healthy">
+                            <span class="indicator-dot bg-emerald-400"></span>
+                            <span data-i18n="demo_healthy">1. Normal Growth (18 mo)</span>
+                        </button>
+                        <button type="button" class="btn-demo-preset" data-preset="at_risk">
+                            <span class="indicator-dot bg-amber-400"></span>
+                            <span data-i18n="demo_at_risk">2. Moderate Stunting (24 mo)</span>
+                        </button>
+                        <button type="button" class="btn-demo-preset" data-preset="severe">
+                            <span class="indicator-dot bg-rose-400"></span>
+                            <span data-i18n="demo_severe">3. Severe Stunting & Wasting (12 mo)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ambient Geometric Accents -->
+                <div class="hero-bg-accent" aria-hidden="true"></div>
+            </div>
+
+            <!-- Two-Column Assessment Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Column: Input Form (5 Cols on LG) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <form id="stunting-form" class="card-panel p-5 sm:p-6 space-y-6" novalidate>
+                        
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="clipboard-edit" class="w-5 h-5 text-emerald-600"></i>
+                                <h2 class="font-bold text-base text-slate-900" data-i18n="form_title">Child Health Parameters</h2>
+                            </div>
+                            <button type="reset" id="btn-form-reset" class="text-xs font-semibold text-slate-400 hover:text-slate-700 flex items-center gap-1 transition-colors">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                <span data-i18n="btn_reset">Reset</span>
+                            </button>
+                        </div>
+
+                        <!-- Group 1: Basic Child Identity -->
+                        <div class="space-y-4">
+                            <div class="section-label flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span data-i18n="group_basic_info">1. Basic Information</span>
+                            </div>
+
+                            <!-- Child Name -->
+                            <div>
+                                <label for="child-name" class="form-label" data-i18n="label_child_name">Child / Patient Name (Optional)</label>
+                                <input type="text" id="child-name" class="form-input" placeholder="e.g. Aisha / Budi" maxlength="40">
+                            </div>
+
+                            <!-- Gender & Age in Months (Side by Side) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <!-- Gender Selector -->
+                                <div>
+                                    <label class="form-label" data-i18n="label_gender">Gender</label>
+                                    <div class="segmented-control grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/80">
+                                        <label class="seg-item">
+                                            <input type="radio" name="gender" value="Male" checked>
+                                            <span class="seg-btn flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg cursor-pointer">
+                                                <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i>
+                                                <span data-i18n="gender_male">Boy</span>
+                                            </span>
+                                        </label>
+                                        <label class="seg-item">
+                                            <input type="radio" name="gender" value="Female">
+                                            <span class="seg-btn flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg cursor-pointer">
+                                                <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i>
+                                                <span data-i18n="gender_female">Girl</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Age in Months -->
+                                <div>
+                                    <label for="child-age" class="form-label flex items-center justify-between">
+                                        <span data-i18n="label_age">Age (Months)</span>
+                                        <span class="text-[11px] font-normal text-slate-400">0 - 60 mo</span>
+                                    </label>
+                                    <div class="input-unit-wrapper">
+                                        <input type="number" id="child-age" class="form-input" min="0" max="60" value="18" required>
+                                        <span class="input-unit-badge" data-i18n="unit_months">months</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Age Selectors -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[11px] text-slate-400" data-i18n="quick_age">Quick Age:</span>
+                                <button type="button" class="btn-chip-age" data-age="6">6m</button>
+                                <button type="button" class="btn-chip-age" data-age="12">12m</button>
+                                <button type="button" class="btn-chip-age" data-age="18">18m</button>
+                                <button type="button" class="btn-chip-age" data-age="24">24m</button>
+                                <button type="button" class="btn-chip-age" data-age="36">36m</button>
+                                <button type="button" class="btn-chip-age" data-age="48">48m</button>
+                                <button type="button" class="btn-chip-age" data-age="60">60m</button>
+                            </div>
+                        </div>
+
+                        <!-- Group 2: Anthropometric Measurements -->
+                        <div class="space-y-4 pt-2 border-t border-slate-100">
+                            <div class="section-label flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <i data-lucide="ruler" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span data-i18n="group_anthropometrics">2. Anthropometric Measurements</span>
+                            </div>
+
+                            <!-- Height & Weight (Side by Side) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <!-- Height / Length (cm) -->
+                                <div>
+                                    <label for="child-height" class="form-label flex items-center justify-between">
+                                        <span data-i18n="label_height">Height / Length</span>
+                                        <span class="text-[11px] font-normal text-slate-400">40 - 130 cm</span>
+                                    </label>
+                                    <div class="input-unit-wrapper">
+                                        <input type="number" id="child-height" class="form-input" min="40" max="130" step="0.1" value="82.5" required>
+                                        <span class="input-unit-badge">cm</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1" data-i18n="height_helper">Recumbent (<24m) or Standing (≥24m)</p>
+                                </div>
+
+                                <!-- Weight (kg) -->
+                                <div>
+                                    <label for="child-weight" class="form-label flex items-center justify-between">
+                                        <span data-i18n="label_weight">Body Weight</span>
+                                        <span class="text-[11px] font-normal text-slate-400">1.5 - 35 kg</span>
+                                    </label>
+                                    <div class="input-unit-wrapper">
+                                        <input type="number" id="child-weight" class="form-input" min="1.5" max="35" step="0.1" value="10.8" required>
+                                        <span class="input-unit-badge">kg</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1" data-i18n="weight_helper">Calibrated digital scale</p>
+                                </div>
+                            </div>
+
+                            <!-- Optional Measurements: Head Circumference & MUAC -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <!-- Head Circumference -->
+                                <div>
+                                    <label for="child-head-circ" class="form-label flex items-center justify-between">
+                                        <span data-i18n="label_head_circ">Head Circumference</span>
+                                        <span class="text-[10px] text-slate-400" data-i18n="optional_tag">(Optional)</span>
+                                    </label>
+                                    <div class="input-unit-wrapper">
+                                        <input type="number" id="child-head-circ" class="form-input" min="30" max="60" step="0.1" placeholder="47.0">
+                                        <span class="input-unit-badge">cm</span>
+                                    </div>
+                                </div>
+
+                                <!-- MUAC (Mid-Upper Arm Circumference) -->
+                                <div>
+                                    <label for="child-muac" class="form-label flex items-center justify-between">
+                                        <span data-i18n="label_muac">MUAC / LiLA</span>
+                                        <span class="text-[10px] text-slate-400" data-i18n="optional_tag">(Optional)</span>
+                                    </label>
+                                    <div class="input-unit-wrapper">
+                                        <input type="number" id="child-muac" class="form-input" min="8" max="25" step="0.1" placeholder="14.2">
+                                        <span class="input-unit-badge">cm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 3: Socio-Demographic & Health Context -->
+                        <div class="space-y-4 pt-2 border-t border-slate-100">
+                            <div class="section-label flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <i data-lucide="home" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span data-i18n="group_demographics">3. Socio-Demographic & Health History</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <!-- Maternal Education -->
+                                <div>
+                                    <label for="maternal-education" class="form-label" data-i18n="label_maternal_edu">Maternal Education Level</label>
+                                    <select id="maternal-education" class="form-select">
+                                        <option value="Higher" data-i18n="edu_higher">Higher / University (D3/S1/S2)</option>
+                                        <option value="Secondary" selected data-i18n="edu_secondary">Secondary (SMA/SMK/SMP)</option>
+                                        <option value="Primary" data-i18n="edu_primary">Primary School (SD)</option>
+                                        <option value="No Education" data-i18n="edu_none">No Formal Education</option>
+                                    </select>
+                                </div>
+
+                                <!-- Residence / Domisili -->
+                                <div>
+                                    <label for="residence" class="form-label" data-i18n="label_residence">Residential Area</label>
+                                    <select id="residence" class="form-select">
+                                        <option value="Urban" selected data-i18n="res_urban">Urban Area (Perkotaan)</option>
+                                        <option value="Rural" data-i18n="res_rural">Rural Area (Pedesaan)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <!-- Wealth Quintile -->
+                                <div>
+                                    <label for="poverty-rating" class="form-label" data-i18n="label_wealth">Household Wealth Quintile</label>
+                                    <select id="poverty-rating" class="form-select">
+                                        <option value="Richest" data-i18n="wealth_richest">Richest (Kuintil 5)</option>
+                                        <option value="Richer" data-i18n="wealth_richer">Richer (Kuintil 4)</option>
+                                        <option value="Middle" selected data-i18n="wealth_middle">Middle (Kuintil 3)</option>
+                                        <option value="Poorer" data-i18n="wealth_poorer">Poorer (Kuintil 2)</option>
+                                        <option value="Poorest" data-i18n="wealth_poorest">Poorest (Kuintil 1)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Exclusive Breastfeeding History -->
+                                <div>
+                                    <label for="breastfeeding" class="form-label" data-i18n="label_breastfeeding">Exclusive Breastfeeding (0-6m)</label>
+                                    <select id="breastfeeding" class="form-select">
+                                        <option value="Yes" selected data-i18n="bf_yes">Yes (Exclusive ≥6 mo)</option>
+                                        <option value="Partial" data-i18n="bf_partial">Partial / Mixed Feeding</option>
+                                        <option value="No" data-i18n="bf_no">No (Formula only)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CTA Run Assessment Button -->
+                        <div class="pt-2">
+                            <button type="submit" id="btn-submit-assessment" class="btn-primary w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white font-bold text-sm shadow-md transition-all">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span data-i18n="btn_run_assessment">Run Health Assessment</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right Column: Results & Clinical Analysis (7 Cols on LG) -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Diagnostic Skeleton / Loader State (Initially hidden) -->
+                    <div id="results-skeleton" class="hidden card-panel p-6 space-y-4 animate-pulse">
+                        <div class="flex items-center justify-between">
+                            <div class="h-6 w-48 bg-slate-200 rounded-md"></div>
+                            <div class="h-6 w-24 bg-slate-200 rounded-full"></div>
+                        </div>
+                        <div class="h-24 bg-slate-100 rounded-xl"></div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="h-20 bg-slate-100 rounded-xl"></div>
+                            <div class="h-20 bg-slate-100 rounded-xl"></div>
+                            <div class="h-20 bg-slate-100 rounded-xl"></div>
+                        </div>
+                        <div class="h-32 bg-slate-100 rounded-xl"></div>
+                    </div>
+
+                    <!-- Main Diagnostic Result Card -->
+                    <div id="results-card" class="card-panel p-6 space-y-6 transition-all duration-300">
+                        
+                        <!-- Header Status Section -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="res_screening_title">Clinical Screening Report</span>
+                                    <span class="text-slate-300">•</span>
+                                    <span id="res-timestamp" class="text-xs text-slate-500 font-medium">Just now</span>
+                                </div>
+                                <h3 id="res-child-header" class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mt-0.5">
+                                    Aisha (18 months • Girl)
+                                </h3>
+                            </div>
+
+                            <!-- Growth Status Badge -->
+                            <div id="res-status-badge" class="badge-status badge-normal self-start sm:self-center">
+                                <span class="badge-icon"><i data-lucide="check-circle-2" class="w-4 h-4"></i></span>
+                                <span id="res-status-text" data-i18n="status_normal_growth">Normal Growth</span>
+                            </div>
+                        </div>
+
+                        <!-- Summary Alert Banner -->
+                        <div id="res-summary-box" class="p-4 rounded-xl border transition-all text-sm leading-relaxed flex items-start gap-3 bg-emerald-50/60 border-emerald-200 text-emerald-950">
+                            <i id="res-summary-icon" data-lucide="shield-check" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <div id="res-summary-headline" class="font-bold text-slate-900">Optimal Growth Velocity</div>
+                                <p id="res-summary-desc" class="text-slate-600 text-xs sm:text-sm mt-0.5">
+                                    Child's height and weight are well within the standard standard deviation corridor of the WHO Child Growth Standards (HAZ: +0.42 SD).
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Anthropometric Z-Scores Visual Dashboard -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                                    <i data-lucide="gauge" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                    <span data-i18n="res_zscores_title">WHO Standard Deviation (Z-Score) Breakdown</span>
+                                </h4>
+                                <span class="text-[11px] text-slate-400 font-medium" data-i18n="res_who_ref">WHO Multicentre Study Ref</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                                
+                                <!-- Card 1: Height-for-Age (HAZ / TB/U - Stunting Indicator) -->
+                                <div class="metric-box bg-slate-50/70 border border-slate-200/80 rounded-xl p-3.5 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-600" data-i18n="metric_haz">Height-for-Age (HAZ)</span>
+                                        <span id="badge-haz-tag" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Normal</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <span id="val-haz" class="text-xl font-extrabold text-slate-900">+0.42</span>
+                                        <span class="text-xs font-medium text-slate-400">SD (Z-score)</span>
+                                    </div>
+                                    
+                                    <!-- Visual Gauge Bar -->
+                                    <div class="zscore-track">
+                                        <div class="zscore-zone zone-severe"></div>
+                                        <div class="zscore-zone zone-stunted"></div>
+                                        <div class="zscore-zone zone-normal"></div>
+                                        <div class="zscore-zone zone-tall"></div>
+                                        <div id="marker-haz" class="zscore-marker" style="left: 55%;"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[9px] text-slate-400 font-mono">
+                                        <span>-3SD</span>
+                                        <span>-2SD</span>
+                                        <span>0 (Med)</span>
+                                        <span>+2SD</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-200/50">
+                                        <span data-i18n="measured_vs_median">Measured:</span> <strong id="val-height-measured">82.5 cm</strong>
+                                        <span class="text-slate-400">| Med: <span id="val-height-median">81.5 cm</span></span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Weight-for-Age (WAZ / BB/U - Underweight Indicator) -->
+                                <div class="metric-box bg-slate-50/70 border border-slate-200/80 rounded-xl p-3.5 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-600" data-i18n="metric_waz">Weight-for-Age (WAZ)</span>
+                                        <span id="badge-waz-tag" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Normal</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <span id="val-waz" class="text-xl font-extrabold text-slate-900">+0.15</span>
+                                        <span class="text-xs font-medium text-slate-400">SD (Z-score)</span>
+                                    </div>
+                                    
+                                    <!-- Visual Gauge Bar -->
+                                    <div class="zscore-track">
+                                        <div class="zscore-zone zone-severe"></div>
+                                        <div class="zscore-zone zone-stunted"></div>
+                                        <div class="zscore-zone zone-normal"></div>
+                                        <div class="zscore-zone zone-tall"></div>
+                                        <div id="marker-waz" class="zscore-marker" style="left: 52%;"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[9px] text-slate-400 font-mono">
+                                        <span>-3SD</span>
+                                        <span>-2SD</span>
+                                        <span>0 (Med)</span>
+                                        <span>+2SD</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-200/50">
+                                        <span data-i18n="measured_vs_median">Measured:</span> <strong id="val-weight-measured">10.8 kg</strong>
+                                        <span class="text-slate-400">| Med: <span id="val-weight-median">10.6 kg</span></span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3: Weight-for-Height (WHZ / BB/TB - Wasting Indicator) -->
+                                <div class="metric-box bg-slate-50/70 border border-slate-200/80 rounded-xl p-3.5 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-600" data-i18n="metric_whz">Weight-for-Height (WHZ)</span>
+                                        <span id="badge-whz-tag" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Normal</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <span id="val-whz" class="text-xl font-extrabold text-slate-900">-0.10</span>
+                                        <span class="text-xs font-medium text-slate-400">SD (Z-score)</span>
+                                    </div>
+                                    
+                                    <!-- Visual Gauge Bar -->
+                                    <div class="zscore-track">
+                                        <div class="zscore-zone zone-severe"></div>
+                                        <div class="zscore-zone zone-stunted"></div>
+                                        <div class="zscore-zone zone-normal"></div>
+                                        <div class="zscore-zone zone-tall"></div>
+                                        <div id="marker-whz" class="zscore-marker" style="left: 49%;"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[9px] text-slate-400 font-mono">
+                                        <span>-3SD</span>
+                                        <span>-2SD</span>
+                                        <span>0 (Med)</span>
+                                        <span>+2SD</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-200/50">
+                                        <span data-i18n="bmi_label">BMI:</span> <strong id="val-bmi">15.8 kg/m²</strong>
+                                        <span class="text-slate-400">| <span id="val-muac-display">MUAC: Normal</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actionable Evidence-Based Clinical Recommendations -->
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                                <i data-lucide="list-checks" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span data-i18n="res_recommendations_title">Targeted Clinical & Nutritional Roadmap</span>
+                            </h4>
+
+                            <div id="recommendations-container" class="space-y-2.5">
+                                <!-- Populated dynamically by script.js -->
+                            </div>
+                        </div>
+
+                        <!-- Clinical Disclaimer Notice -->
+                        <div class="clinical-disclaimer flex items-start gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200/90 text-xs text-slate-500">
+                            <i data-lucide="info" class="w-4 h-4 text-slate-400 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong class="text-slate-700" data-i18n="disclaimer_title">Clinical Screening Disclaimer:</strong>
+                                <span data-i18n="disclaimer_body"> This digital tool is engineered strictly for early screening and public health monitoring based on WHO Standards. It does not replace professional pediatric examination, laboratory tests, or medical diagnosis. Please consult a qualified pediatrician or community health worker (Puskesmas/Posyandu) for comprehensive clinical evaluation.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: PUBLIC HEALTH ANALYTICS & UNICEF DATASET EXPLORER -->
+        <!-- ========================================================================= -->
+        <section id="tab-analytics" class="tab-content hidden space-y-6">
+            
+            <!-- Analytics Header & Filter Bar -->
+            <div class="card-panel p-6 space-y-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full mb-1.5">
+                            <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                            <span>UNICEF Indonesia Nutrition & Socio-Demographic Intelligence</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight" data-i18n="analytics_title">
+                            National Child Nutrition & Stunting Trends
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1" data-i18n="analytics_subtitle">
+                            Interactive exploratory data analytics spanning 2018–2024 across maternal education, residential geography, and wealth quintiles.
+                        </p>
+                    </div>
+
+                    <!-- Export Filtered CSV Button -->
+                    <button type="button" id="btn-export-csv" class="btn-primary self-start md:self-center flex items-center gap-2 py-2.5 px-4 text-xs font-bold rounded-xl text-white shadow-sm">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span data-i18n="btn_export_csv">Export Cleaned CSV</span>
+                    </button>
+                </div>
+
+                <!-- Macro Filter Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+                    
+                    <!-- Indicator Filter -->
+                    <div>
+                        <label for="filter-indicator" class="form-label" data-i18n="filter_indicator_label">Nutritional Indicator</label>
+                        <select id="filter-indicator" class="form-select">
+                            <option value="All" data-i18n="filter_all_indicators">All Indicators (Combined)</option>
+                            <option value="Stunting" selected data-i18n="ind_stunting">Stunting (Height-for-Age)</option>
+                            <option value="Breastfeeding (Exclusive)" data-i18n="ind_breastfeeding">Exclusive Breastfeeding</option>
+                            <option value="Wasting" data-i18n="ind_wasting">Wasting (Acute Malnutrition)</option>
+                            <option value="Overweight" data-i18n="ind_overweight">Overweight</option>
+                        </select>
+                    </div>
+
+                    <!-- Residence Filter -->
+                    <div>
+                        <label for="filter-residence" class="form-label" data-i18n="filter_residence_label">Residential Domain</label>
+                        <select id="filter-residence" class="form-select">
+                            <option value="All" selected data-i18n="filter_all">National (Urban & Rural)</option>
+                            <option value="Urban" data-i18n="res_urban">Urban Only</option>
+                            <option value="Rural" data-i18n="res_rural">Rural Only</option>
+                        </select>
+                    </div>
+
+                    <!-- Maternal Education Filter -->
+                    <div>
+                        <label for="filter-edu" class="form-label" data-i18n="filter_edu_label">Maternal Education Level</label>
+                        <select id="filter-edu" class="form-select">
+                            <option value="All" selected data-i18n="filter_all">All Education Levels</option>
+                            <option value="Higher" data-i18n="edu_higher">Higher / University</option>
+                            <option value="Secondary" data-i18n="edu_secondary">Secondary</option>
+                            <option value="Primary" data-i18n="edu_primary">Primary School</option>
+                            <option value="No Education" data-i18n="edu_none">No Education</option>
+                        </select>
+                    </div>
+
+                    <!-- Wealth Quintile Filter -->
+                    <div>
+                        <label for="filter-wealth" class="form-label" data-i18n="filter_wealth_label">Household Wealth Quintile</label>
+                        <select id="filter-wealth" class="form-select">
+                            <option value="All" selected data-i18n="filter_all">All Wealth Quintiles</option>
+                            <option value="Richest" data-i18n="wealth_richest">Richest (Q5)</option>
+                            <option value="Richer" data-i18n="wealth_richer">Richer (Q4)</option>
+                            <option value="Middle" data-i18n="wealth_middle">Middle (Q3)</option>
+                            <option value="Poorer" data-i18n="wealth_poorer">Poorer (Q2)</option>
+                            <option value="Poorest" data-i18n="wealth_poorest">Poorest (Q1)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Performance Indicator Cards (KPIs) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- KPI 1: Stunting Average -->
+                <div class="kpi-card p-4 rounded-xl border border-slate-200/90 bg-white shadow-xs space-y-2">
+                    <div class="flex items-center justify-between text-slate-500">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_stunting">Avg. Stunting Rate</span>
+                        <div class="p-1.5 rounded-lg bg-rose-50 text-rose-600">
+                            <i data-lucide="trending-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-val-stunting" class="text-2xl font-black text-slate-900">24.3%</span>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center">
+                            ↓ 6.5% <span class="text-[10px] text-slate-400 font-normal ml-0.5">(since 2018)</span>
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400" data-i18n="kpi_stunting_sub">National prevalence trajectory</p>
+                </div>
+
+                <!-- KPI 2: Exclusive Breastfeeding -->
+                <div class="kpi-card p-4 rounded-xl border border-slate-200/90 bg-white shadow-xs space-y-2">
+                    <div class="flex items-center justify-between text-slate-500">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_breastfeeding">Exclusive Breastfeeding</span>
+                        <div class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
+                            <i data-lucide="milk" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-val-bf" class="text-2xl font-black text-slate-900">48.6%</span>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center">
+                            ↑ 6.6% <span class="text-[10px] text-slate-400 font-normal ml-0.5">(progress)</span>
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400" data-i18n="kpi_bf_sub">Infants aged 0-6 months</p>
+                </div>
+
+                <!-- KPI 3: Wasting / Acute Malnutrition -->
+                <div class="kpi-card p-4 rounded-xl border border-slate-200/90 bg-white shadow-xs space-y-2">
+                    <div class="flex items-center justify-between text-slate-500">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_wasting">Avg. Wasting Rate</span>
+                        <div class="p-1.5 rounded-lg bg-amber-50 text-amber-600">
+                            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-val-wasting" class="text-2xl font-black text-slate-900">8.4%</span>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center">
+                            ↓ 1.8% <span class="text-[10px] text-slate-400 font-normal ml-0.5">(improving)</span>
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400" data-i18n="kpi_wasting_sub">Weight-for-Height < -2 SD</p>
+                </div>
+
+                <!-- KPI 4: Maternal Education Disparity Gap -->
+                <div class="kpi-card p-4 rounded-xl border border-slate-200/90 bg-white shadow-xs space-y-2">
+                    <div class="flex items-center justify-between text-slate-500">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_education_impact">Education Equity Gap</span>
+                        <div class="p-1.5 rounded-lg bg-sky-50 text-sky-600">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-val-equity" class="text-2xl font-black text-slate-900">-9.6%</span>
+                        <span class="text-xs font-medium text-slate-500" data-i18n="kpi_equity_sub">Stunting reduction in higher ed</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400" data-i18n="kpi_equity_desc">Higher vs No Education</p>
+                </div>
+            </div>
+
+            <!-- Visual Charts Grid (2x2) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Chart 1: Annual Trajectory (2018-2024) -->
+                <div class="card-panel p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900" data-i18n="chart1_title">Annual Nutrition Trends (2018–2024)</h3>
+                            <p class="text-xs text-slate-500" data-i18n="chart1_subtitle">Year-over-year mean percentage trajectory</p>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono">Plotly/Chart.js</span>
+                    </div>
+                    <div class="chart-container relative h-72">
+                        <canvas id="chart-annual-trend"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Maternal Education Impact -->
+                <div class="card-panel p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900" data-i18n="chart2_title">Maternal Education Gradient</h3>
+                            <p class="text-xs text-slate-500" data-i18n="chart2_subtitle">Impact of mother's education on nutrition status</p>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono">Grouped Bar</span>
+                    </div>
+                    <div class="chart-container relative h-72">
+                        <canvas id="chart-education"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Urban vs Rural Disparities -->
+                <div class="card-panel p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900" data-i18n="chart3_title">Geographic Residence Disparity (Urban vs Rural)</h3>
+                            <p class="text-xs text-slate-500" data-i18n="chart3_subtitle">Regional accessibility and infrastructure impact</p>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono">Comparative Bar</span>
+                    </div>
+                    <div class="chart-container relative h-72">
+                        <canvas id="chart-residence"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4: Wealth Quintile Gradient (Poorest to Richest) -->
+                <div class="card-panel p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900" data-i18n="chart4_title">Socio-Economic Wealth Gradient (Q1 to Q5)</h3>
+                            <p class="text-xs text-slate-500" data-i18n="chart4_subtitle">Nutritional outcome across household poverty ratings</p>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono">Gradient Curve</span>
+                    </div>
+                    <div class="chart-container relative h-72">
+                        <canvas id="chart-wealth"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Raw Dataset Table & Search -->
+            <div class="card-panel p-5 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900" data-i18n="table_title">Dataset Records Explorer</h3>
+                        <p class="text-xs text-slate-500" data-i18n="table_subtitle">Filtered records from UNICEF Indonesia cleaned cohort</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <input type="text" id="table-search-input" class="form-input text-xs py-1.5 pl-8 pr-3 w-48 sm:w-64" placeholder="Search indicator, edu, year...">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Viewport -->
+                <div class="overflow-x-auto rounded-lg border border-slate-200/80">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="py-2.5 px-3">#</th>
+                                <th class="py-2.5 px-3" data-i18n="col_indicator">Indicator</th>
+                                <th class="py-2.5 px-3" data-i18n="col_gender">Gender</th>
+                                <th class="py-2.5 px-3" data-i18n="col_age">Age Group</th>
+                                <th class="py-2.5 px-3" data-i18n="col_wealth">Wealth Quintile</th>
+                                <th class="py-2.5 px-3" data-i18n="col_residence">Residence</th>
+                                <th class="py-2.5 px-3" data-i18n="col_edu">Maternal Education</th>
+                                <th class="py-2.5 px-3" data-i18n="col_year">Year</th>
+                                <th class="py-2.5 px-3 text-right" data-i18n="col_value">Observation (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataset-tbody" class="divide-y divide-slate-100 bg-white">
+                            <!-- Populated dynamically by script.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Table Pagination Controls -->
+                <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                    <div>
+                        <span data-i18n="table_showing">Showing</span> <strong id="table-record-count">0</strong> <span data-i18n="table_matching">matching data points</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button type="button" id="btn-page-prev" class="btn-page" disabled><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                        <span id="table-page-label" class="px-2 font-medium text-slate-700">Page 1 of 1</span>
+                        <button type="button" id="btn-page-next" class="btn-page"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: CLINICAL GUIDELINES & WHO ANTHROPOMETRY METHODOLOGY -->
+        <!-- ========================================================================= -->
+        <section id="tab-guidelines" class="tab-content hidden space-y-6">
+            
+            <!-- Clinical Methodology Overview -->
+            <div class="card-panel p-6 space-y-4">
+                <div class="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-wider">
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>Clinical Reference Framework</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight" data-i18n="guide_title">
+                    WHO Child Growth Standards & Z-Score Methodology
+                </h2>
+                <p class="text-slate-600 text-sm leading-relaxed" data-i18n="guide_desc">
+                    The World Health Organization (WHO) Child Growth Standards were developed through the Multicentre Growth Reference Study (MGRS), following children raised under optimal socio-economic and nutritional conditions worldwide.
+                </p>
+            </div>
+
+            <!-- Standard Deviation Interpretation Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Card 1: Height-for-Age (HAZ) -->
+                <div class="card-panel p-5 space-y-3 border-t-4 border-t-emerald-600">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="ruler" class="w-5 h-5 text-emerald-600"></i>
+                        <h3 class="font-bold text-base text-slate-900" data-i18n="guide_haz_title">Height-for-Age (HAZ / TB/U)</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed" data-i18n="guide_haz_desc">
+                        Measures linear growth failure and cumulative growth deficits over time, indicating chronic malnutrition.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-rose-600">< -3 SD</span>
+                            <span data-i18n="sd_severely_stunted">Severely Stunted (Sangat Pendek)</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-amber-600">-3 SD to < -2 SD</span>
+                            <span data-i18n="sd_stunted">Stunted (Pendek)</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-emerald-600">-2 SD to +2 SD</span>
+                            <span data-i18n="sd_normal">Normal Linear Growth</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-sky-600">> +2 SD</span>
+                            <span data-i18n="sd_tall">Tall (Tinggi)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Weight-for-Age (WAZ) -->
+                <div class="card-panel p-5 space-y-3 border-t-4 border-t-sky-600">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="scale" class="w-5 h-5 text-sky-600"></i>
+                        <h3 class="font-bold text-base text-slate-900" data-i18n="guide_waz_title">Weight-for-Age (WAZ / BB/U)</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed" data-i18n="guide_waz_desc">
+                        Composite index of both acute (wasting) and chronic (stunting) nutritional status. Widely used in community Posyandu growth monitoring.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-rose-600">< -3 SD</span>
+                            <span data-i18n="sd_severely_underweight">Severely Underweight (Gizi Buruk)</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-amber-600">-3 SD to < -2 SD</span>
+                            <span data-i18n="sd_underweight">Underweight (Gizi Kurang)</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-emerald-600">-2 SD to +2 SD</span>
+                            <span data-i18n="sd_normal_weight">Normal Weight</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-purple-600">> +2 SD</span>
+                            <span data-i18n="sd_overweight_risk">Risk of Overweight</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Weight-for-Height (WHZ) -->
+                <div class="card-panel p-5 space-y-3 border-t-4 border-t-amber-500">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="activity" class="w-5 h-5 text-amber-600"></i>
+                        <h3 class="font-bold text-base text-slate-900" data-i18n="guide_whz_title">Weight-for-Height (WHZ / BB/TB)</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed" data-i18n="guide_whz_desc">
+                        Measures body mass relative to body length. Reflects current nutritional status and acute severe wasting / dehydration.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-rose-600">< -3 SD</span>
+                            <span data-i18n="sd_severe_wasting">Severely Wasted (Gizi Buruk Akut)</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-amber-600">-3 SD to < -2 SD</span>
+                            <span data-i18n="sd_wasted">Wasted / Thin (Gizi Kurang)</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-emerald-600">-2 SD to +1 SD</span>
+                            <span data-i18n="sd_normal_nutrition">Normal / Good Nutrition</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-purple-600">> +2 SD</span>
+                            <span data-i18n="sd_overweight">Overweight / Obese</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 1000 First Days of Life Golden Period Framework -->
+            <div class="card-panel p-6 space-y-4">
+                <div class="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-wider">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Window of Opportunity</span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900" data-i18n="hpk_title">
+                    The 1,000 First Days of Life (1000 HPK)
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed" data-i18n="hpk_desc">
+                    The period from conception (270 days) through a child's second birthday (730 days) is the most critical window to prevent permanent cognitive, metabolic, and physical growth faltering.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                        <div class="font-bold text-xs text-emerald-700 uppercase tracking-wider" data-i18n="hpk_stage1_title">Stage 1: Pregnancy (270 Days)</div>
+                        <p class="text-xs text-slate-600" data-i18n="hpk_stage1_desc">
+                            Maternal nutrition, iron-folic acid supplementation (TTD 90+ tablets), and antenatal care visits (ANC 6x).
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                        <div class="font-bold text-xs text-emerald-700 uppercase tracking-wider" data-i18n="hpk_stage2_title">Stage 2: 0–6 Months (180 Days)</div>
+                        <p class="text-xs text-slate-600" data-i18n="hpk_stage2_desc">
+                            Early Initiation of Breastfeeding (IMD) within 1 hour of birth and Exclusive Breastfeeding without supplementary water or food.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                        <div class="font-bold text-xs text-emerald-700 uppercase tracking-wider" data-i18n="hpk_stage3_title">Stage 3: 6–24 Months (550 Days)</div>
+                        <p class="text-xs text-slate-600" data-i18n="hpk_stage3_desc">
+                            Timely, adequate, safe Complementary Feeding (MP-ASI) rich in animal protein (eggs, fish, meat) alongside continued breastfeeding.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Professional Footer -->
+    <footer class="main-footer bg-white border-t border-slate-200 py-8 px-4 mt-12 text-slate-500 text-xs">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">S</div>
+                <span class="font-semibold text-slate-800">StuntingCare Analytics Platform</span>
+                <span class="text-slate-300">•</span>
+                <span data-i18n="footer_credits">UNICEF & WHO Child Growth Framework</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span data-i18n="footer_portfolio">Portfolio Project by Antariksa</span>
+                <a href="https://github.com/Antariksa21/Projek-unicef-nutrition-dashboard" target="_blank" rel="noopener noreferrer" class="text-emerald-700 hover:underline font-medium">
+                    GitHub Repository
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Print Report Stylesheet Layer (Invisible until print triggered) -->
+    <div id="print-area" class="hidden"></div>
+
+    <!-- Main JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
