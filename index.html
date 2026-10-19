@@ -11,6 +11,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS with Surface Theme Extension -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        surface: '#f8fafc'
+                    }
+                }
+            }
+        };
+    </script>
+
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     
@@ -192,7 +206,7 @@
                             <!-- Child Name -->
                             <div>
                                 <label for="child-name" class="form-label" data-i18n="label_child_name">Child / Patient Name (Optional)</label>
-                                <input type="text" id="child-name" class="form-input" placeholder="e.g. Aisha / Budi" maxlength="40">
+                                <input type="text" id="child-name" class="form-input" placeholder="e.g. Aisha / Budi" data-i18n-placeholder="placeholder_name" maxlength="40">
                             </div>
 
                             <!-- Gender & Age in Months (Side by Side) -->
@@ -234,13 +248,13 @@
                             <!-- Quick Age Selectors -->
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="text-[11px] text-slate-400" data-i18n="quick_age">Quick Age:</span>
-                                <button type="button" class="btn-chip-age" data-age="6">6m</button>
-                                <button type="button" class="btn-chip-age" data-age="12">12m</button>
-                                <button type="button" class="btn-chip-age" data-age="18">18m</button>
-                                <button type="button" class="btn-chip-age" data-age="24">24m</button>
-                                <button type="button" class="btn-chip-age" data-age="36">36m</button>
-                                <button type="button" class="btn-chip-age" data-age="48">48m</button>
-                                <button type="button" class="btn-chip-age" data-age="60">60m</button>
+                                <button type="button" class="btn-chip-age" data-age="6">6<span data-i18n="age_unit_short">m</span></button>
+                                <button type="button" class="btn-chip-age" data-age="12">12<span data-i18n="age_unit_short">m</span></button>
+                                <button type="button" class="btn-chip-age" data-age="18">18<span data-i18n="age_unit_short">m</span></button>
+                                <button type="button" class="btn-chip-age" data-age="24">24<span data-i18n="age_unit_short">m</span></button>
+                                <button type="button" class="btn-chip-age" data-age="36">36<span data-i18n="age_unit_short">m</span></button>
+                                <button type="button" class="btn-chip-age" data-age="48">48<span data-i18n="age_unit_short">m</span></button>
+                                <button type="button" class="btn-chip-age" data-age="60">60<span data-i18n="age_unit_short">m</span></button>
                             </div>
                         </div>
 
@@ -408,14 +422,14 @@
 
                             <!-- Growth Status Badge -->
                             <div id="res-status-badge" class="badge-status badge-normal self-start sm:self-center">
-                                <span class="badge-icon"><i data-lucide="check-circle-2" class="w-4 h-4"></i></span>
+                                <span id="res-status-badge-icon" class="badge-icon"><i data-lucide="check-circle-2" class="w-4 h-4"></i></span>
                                 <span id="res-status-text" data-i18n="status_normal_growth">Normal Growth</span>
                             </div>
                         </div>
 
                         <!-- Summary Alert Banner -->
                         <div id="res-summary-box" class="p-4 rounded-xl border transition-all text-sm leading-relaxed flex items-start gap-3 bg-emerald-50/60 border-emerald-200 text-emerald-950">
-                            <i id="res-summary-icon" data-lucide="shield-check" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <span id="res-summary-icon-wrapper" class="shrink-0 mt-0.5"><i id="res-summary-icon" data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i></span>
                             <div>
                                 <div id="res-summary-headline" class="font-bold text-slate-900">Optimal Growth Velocity</div>
                                 <p id="res-summary-desc" class="text-slate-600 text-xs sm:text-sm mt-0.5">
@@ -567,7 +581,7 @@
                     <div>
                         <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full mb-1.5">
                             <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-                            <span>UNICEF Indonesia Nutrition & Socio-Demographic Intelligence</span>
+                            <span data-i18n="analytics_pill">UNICEF Indonesia Nutrition & Socio-Demographic Intelligence</span>
                         </div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight" data-i18n="analytics_title">
                             National Child Nutrition & Stunting Trends
@@ -603,9 +617,9 @@
                     <div>
                         <label for="filter-residence" class="form-label" data-i18n="filter_residence_label">Residential Domain</label>
                         <select id="filter-residence" class="form-select">
-                            <option value="All" selected data-i18n="filter_all">National (Urban & Rural)</option>
-                            <option value="Urban" data-i18n="res_urban">Urban Only</option>
-                            <option value="Rural" data-i18n="res_rural">Rural Only</option>
+                            <option value="All" selected data-i18n="filter_all_res">National (Urban & Rural)</option>
+                            <option value="Urban" data-i18n="res_urban_filter">Urban Only</option>
+                            <option value="Rural" data-i18n="res_rural_filter">Rural Only</option>
                         </select>
                     </div>
 
@@ -613,11 +627,11 @@
                     <div>
                         <label for="filter-edu" class="form-label" data-i18n="filter_edu_label">Maternal Education Level</label>
                         <select id="filter-edu" class="form-select">
-                            <option value="All" selected data-i18n="filter_all">All Education Levels</option>
-                            <option value="Higher" data-i18n="edu_higher">Higher / University</option>
-                            <option value="Secondary" data-i18n="edu_secondary">Secondary</option>
-                            <option value="Primary" data-i18n="edu_primary">Primary School</option>
-                            <option value="No Education" data-i18n="edu_none">No Education</option>
+                            <option value="All" selected data-i18n="filter_all_edu">All Education Levels</option>
+                            <option value="Higher" data-i18n="edu_higher_filter">Higher / University</option>
+                            <option value="Secondary" data-i18n="edu_secondary_filter">Secondary</option>
+                            <option value="Primary" data-i18n="edu_primary_filter">Primary School</option>
+                            <option value="No Education" data-i18n="edu_none_filter">No Education</option>
                         </select>
                     </div>
 
@@ -625,12 +639,12 @@
                     <div>
                         <label for="filter-wealth" class="form-label" data-i18n="filter_wealth_label">Household Wealth Quintile</label>
                         <select id="filter-wealth" class="form-select">
-                            <option value="All" selected data-i18n="filter_all">All Wealth Quintiles</option>
-                            <option value="Richest" data-i18n="wealth_richest">Richest (Q5)</option>
-                            <option value="Richer" data-i18n="wealth_richer">Richer (Q4)</option>
-                            <option value="Middle" data-i18n="wealth_middle">Middle (Q3)</option>
-                            <option value="Poorer" data-i18n="wealth_poorer">Poorer (Q2)</option>
-                            <option value="Poorest" data-i18n="wealth_poorest">Poorest (Q1)</option>
+                            <option value="All" selected data-i18n="filter_all_wealth">All Wealth Quintiles</option>
+                            <option value="Richest" data-i18n="wealth_richest_filter">Richest (Q5)</option>
+                            <option value="Richer" data-i18n="wealth_richer_filter">Richer (Q4)</option>
+                            <option value="Middle" data-i18n="wealth_middle_filter">Middle (Q3)</option>
+                            <option value="Poorer" data-i18n="wealth_poorer_filter">Poorer (Q2)</option>
+                            <option value="Poorest" data-i18n="wealth_poorest_filter">Poorest (Q1)</option>
                         </select>
                     </div>
                 </div>
@@ -650,7 +664,7 @@
                     <div class="flex items-baseline gap-2">
                         <span id="kpi-val-stunting" class="text-2xl font-black text-slate-900">24.3%</span>
                         <span class="text-xs font-semibold text-emerald-600 flex items-center">
-                            ↓ 6.5% <span class="text-[10px] text-slate-400 font-normal ml-0.5">(since 2018)</span>
+                            ↓ 6.5% <span class="text-[10px] text-slate-400 font-normal ml-0.5" data-i18n="kpi_stunting_change">(since 2018)</span>
                         </span>
                     </div>
                     <p class="text-[11px] text-slate-400" data-i18n="kpi_stunting_sub">National prevalence trajectory</p>
@@ -667,7 +681,7 @@
                     <div class="flex items-baseline gap-2">
                         <span id="kpi-val-bf" class="text-2xl font-black text-slate-900">48.6%</span>
                         <span class="text-xs font-semibold text-emerald-600 flex items-center">
-                            ↑ 6.6% <span class="text-[10px] text-slate-400 font-normal ml-0.5">(progress)</span>
+                            ↑ 6.6% <span class="text-[10px] text-slate-400 font-normal ml-0.5" data-i18n="kpi_bf_change">(progress)</span>
                         </span>
                     </div>
                     <p class="text-[11px] text-slate-400" data-i18n="kpi_bf_sub">Infants aged 0-6 months</p>
@@ -684,7 +698,7 @@
                     <div class="flex items-baseline gap-2">
                         <span id="kpi-val-wasting" class="text-2xl font-black text-slate-900">8.4%</span>
                         <span class="text-xs font-semibold text-emerald-600 flex items-center">
-                            ↓ 1.8% <span class="text-[10px] text-slate-400 font-normal ml-0.5">(improving)</span>
+                            ↓ 1.8% <span class="text-[10px] text-slate-400 font-normal ml-0.5" data-i18n="kpi_wasting_change">(improving)</span>
                         </span>
                     </div>
                     <p class="text-[11px] text-slate-400" data-i18n="kpi_wasting_sub">Weight-for-Height < -2 SD</p>
@@ -775,7 +789,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="relative">
-                            <input type="text" id="table-search-input" class="form-input text-xs py-1.5 pl-8 pr-3 w-48 sm:w-64" placeholder="Search indicator, edu, year...">
+                            <input type="text" id="table-search-input" class="form-input text-xs py-1.5 pl-8 pr-3 w-48 sm:w-64" placeholder="Search indicator, edu, year..." data-i18n-placeholder="placeholder_search">
                             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
                         </div>
                     </div>
@@ -826,7 +840,7 @@
             <div class="card-panel p-6 space-y-4">
                 <div class="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-wider">
                     <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                    <span>Clinical Reference Framework</span>
+                    <span data-i18n="guide_pill">Clinical Reference Framework</span>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight" data-i18n="guide_title">
                     WHO Child Growth Standards & Z-Score Methodology
@@ -931,7 +945,7 @@
             <div class="card-panel p-6 space-y-4">
                 <div class="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-wider">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
-                    <span>Window of Opportunity</span>
+                    <span data-i18n="hpk_pill">Window of Opportunity</span>
                 </div>
                 <h3 class="text-lg sm:text-xl font-bold text-slate-900" data-i18n="hpk_title">
                     The 1,000 First Days of Life (1000 HPK)
