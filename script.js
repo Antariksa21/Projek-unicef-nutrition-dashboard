@@ -201,7 +201,11 @@
             hpk_stage3_desc: "Timely, adequate, safe Complementary Feeding (MP-ASI) rich in animal protein (eggs, fish, meat) alongside continued breastfeeding.",
 
             footer_credits: "UNICEF & WHO Child Growth Framework",
-            footer_portfolio: "Portfolio Project by Antariksa"
+            footer_portfolio: "Portfolio Project by Antariksa",
+
+            theme_label: "Theme",
+            theme_light: "Light Mode",
+            theme_dark: "Dark Mode"
         },
 
         id: {
@@ -395,7 +399,11 @@
             hpk_stage3_desc: "Pemberian Makanan Pendamping ASI (MP-ASI) adekuat kaya protein hewani (telur, ikan, daging, hati) serta melanjutkan pemberian ASI hingga 2 tahun.",
 
             footer_credits: "Kerangka Standar Pertumbuhan Anak WHO & UNICEF",
-            footer_portfolio: "Proyek Portofolio oleh Antariksa"
+            footer_portfolio: "Proyek Portofolio oleh Antariksa",
+
+            theme_label: "Tema",
+            theme_light: "Mode Terang",
+            theme_dark: "Mode Gelap"
         }
     };
 
@@ -560,6 +568,44 @@
         renderDatasetTable();
 
         // Re-initialize Lucide Icons
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    }
+
+    // =========================================================================
+    // 4B. THEME ENGINE (LIGHT ☀️ & DARK 🌙)
+    // =========================================================================
+    let currentTheme = 'light';
+
+    function setTheme(theme) {
+        currentTheme = theme === 'dark' ? 'dark' : 'light';
+        localStorage.setItem('app_theme', currentTheme);
+        localStorage.setItem('stuntingcare_theme', currentTheme);
+
+        const isDark = currentTheme === 'dark';
+        document.documentElement.classList.toggle('dark', isDark);
+
+        // Update desktop toggle buttons
+        const btnLight = document.getElementById('theme-light-btn');
+        const btnDark = document.getElementById('theme-dark-btn');
+        if (btnLight && btnDark) {
+            btnLight.classList.toggle('active', !isDark);
+            btnDark.classList.toggle('active', isDark);
+        }
+
+        // Update mobile toggle buttons
+        const mLight = document.getElementById('mobile-theme-light');
+        const mDark = document.getElementById('mobile-theme-dark');
+        if (mLight && mDark) {
+            mLight.classList.toggle('active', !isDark);
+            mDark.classList.toggle('active', isDark);
+        }
+
+        // Re-render analytics charts with new theme colors
+        renderAnalyticsCharts();
+
+        // Refresh icons if needed
         if (window.lucide) {
             window.lucide.createIcons();
         }
@@ -975,6 +1021,13 @@
             'Overweight': { border: '#0284C7', bg: 'rgba(2, 132, 199, 0.1)' }
         };
 
+        // Theme-aware Chart Styling Tokens
+        const isDark = document.documentElement.classList.contains('dark');
+        const chartTextColor = isDark ? '#94A3B8' : '#475569';
+        const chartTitleColor = isDark ? '#F1F5F9' : '#0F172A';
+        const chartGridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+        const chartTooltipBg = isDark ? '#1E293B' : '#0F172A';
+
         const datasetsAnnual = indicators.map(ind => {
             const dataPts = years.map(yr => {
                 const subset = filtered.filter(r => r.Year === yr && r.Indicator === ind);
@@ -987,7 +1040,7 @@
                 label: getIndicatorLabel(ind),
                 data: dataPts,
                 borderColor: palette[ind].border,
-                backgroundColor: palette[ind].bg,
+                backgroundColor: isDark ? palette[ind].border + '22' : palette[ind].bg,
                 tension: 0.35,
                 borderWidth: 2.5,
                 pointRadius: 4,
@@ -1006,11 +1059,30 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } },
-                        tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${c.raw}%` } }
+                        legend: { position: 'top', labels: { color: chartTitleColor, font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } },
+                        tooltip: {
+                            backgroundColor: chartTooltipBg,
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#E2E8F0',
+                            callbacks: { label: (c) => ` ${c.dataset.label}: ${c.raw}%` }
+                        }
                     },
                     scales: {
-                        y: { title: { display: true, text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)' }, min: 0 }
+                        x: {
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)',
+                                color: chartTitleColor,
+                                font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
+                            },
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor },
+                            min: 0
+                        }
                     }
                 }
             });
@@ -1045,10 +1117,29 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } }
+                        legend: { position: 'top', labels: { color: chartTitleColor, font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } },
+                        tooltip: {
+                            backgroundColor: chartTooltipBg,
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#E2E8F0'
+                        }
                     },
                     scales: {
-                        y: { title: { display: true, text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)' }, min: 0 }
+                        x: {
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)',
+                                color: chartTitleColor,
+                                font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
+                            },
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor },
+                            min: 0
+                        }
                     }
                 }
             });
@@ -1081,10 +1172,29 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } }
+                        legend: { position: 'top', labels: { color: chartTitleColor, font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } },
+                        tooltip: {
+                            backgroundColor: chartTooltipBg,
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#E2E8F0'
+                        }
                     },
                     scales: {
-                        y: { title: { display: true, text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)' }, min: 0 }
+                        x: {
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)',
+                                color: chartTitleColor,
+                                font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
+                            },
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor },
+                            min: 0
+                        }
                     }
                 }
             });
@@ -1105,7 +1215,7 @@
                 label: getIndicatorLabel(ind),
                 data: dataPts,
                 borderColor: palette[ind].border,
-                backgroundColor: palette[ind].bg,
+                backgroundColor: isDark ? palette[ind].border + '22' : palette[ind].bg,
                 tension: 0.35,
                 borderWidth: 2.5,
                 pointRadius: 4
@@ -1122,10 +1232,29 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } }
+                        legend: { position: 'top', labels: { color: chartTitleColor, font: { family: 'Plus Jakarta Sans', size: 11 }, boxWidth: 12 } },
+                        tooltip: {
+                            backgroundColor: chartTooltipBg,
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#E2E8F0'
+                        }
                     },
                     scales: {
-                        y: { title: { display: true, text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)' }, min: 0 }
+                        x: {
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: currentLang === 'id' ? 'Rata-rata Prevalensi (%)' : 'Average Prevalence (%)',
+                                color: chartTitleColor,
+                                font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
+                            },
+                            ticks: { color: chartTextColor, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: chartGridColor },
+                            min: 0
+                        }
                     }
                 }
             });
@@ -1343,6 +1472,34 @@
         const btnEn = document.getElementById('lang-en');
         if (btnId) btnId.addEventListener('click', () => setLanguage('id'));
         if (btnEn) btnEn.addEventListener('click', () => setLanguage('en'));
+
+        // Initialize theme with persistent strategy (app_theme > system preference > default light)
+        let savedTheme = localStorage.getItem('app_theme') || localStorage.getItem('stuntingcare_theme');
+        if (!savedTheme) {
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            savedTheme = prefersDark ? 'dark' : 'light';
+        }
+        setTheme(savedTheme);
+
+        // Theme Switcher buttons (Desktop & Mobile)
+        const btnThemeLight = document.getElementById('theme-light-btn');
+        const btnThemeDark = document.getElementById('theme-dark-btn');
+        const mThemeLight = document.getElementById('mobile-theme-light');
+        const mThemeDark = document.getElementById('mobile-theme-dark');
+
+        if (btnThemeLight) btnThemeLight.addEventListener('click', () => setTheme('light'));
+        if (btnThemeDark) btnThemeDark.addEventListener('click', () => setTheme('dark'));
+        if (mThemeLight) mThemeLight.addEventListener('click', () => setTheme('light'));
+        if (mThemeDark) mThemeDark.addEventListener('click', () => setTheme('dark'));
+
+        // System theme preference listener (when user has not explicitly set a manual preference)
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('app_theme') && !localStorage.getItem('stuntingcare_theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        }
 
         // Tab Navigation
         const tabs = document.querySelectorAll('.nav-tab, .mobile-nav-link');

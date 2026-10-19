@@ -177,6 +177,35 @@ body {
     line-height: 1;
 }
 
+/* Theme Toggle Switch */
+.theme-switch-wrapper {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.theme-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--slate-500);
+    transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+    color: var(--slate-900);
+}
+
+.theme-btn.active {
+    background-color: #FFFFFF;
+    color: var(--emerald-800, #065F46);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
 /* Mobile Nav Link */
 .mobile-nav-link {
     background: transparent;
@@ -537,4 +566,398 @@ body {
 
 .shadow-xs {
     box-shadow: var(--shadow-xs);
+}
+
+/* ==========================================================================
+   Dark Theme Design System & Tokens
+   Smooth, legible, high-contrast clinical dark aesthetic
+   ========================================================================== */
+
+html.dark {
+    --surface-bg: #0B1120;
+    --card-bg:    #131E31;
+    --card-border: #1E293B;
+
+    --slate-950: #020617;
+    --slate-900: #F8FAFC;
+    --slate-800: #F1F5F9;
+    --slate-700: #E2E8F0;
+    --slate-600: #CBD5E1;
+    --slate-500: #94A3B8;
+    --slate-400: #64748B;
+    --slate-300: #334155;
+    --slate-200: #1E293B;
+    --slate-100: #1A263D;
+    --slate-50:  #0F172A;
+
+    --success-bg: rgba(6, 78, 59, 0.45);
+    --success-text: #6EE7B7;
+    --success-border: #065F46;
+
+    --warning-bg: rgba(120, 53, 15, 0.45);
+    --warning-text: #FCD34D;
+    --warning-border: #78350F;
+
+    --danger-bg: rgba(136, 19, 55, 0.45);
+    --danger-text: #FDA4AF;
+    --danger-border: #881337;
+
+    --info-bg: rgba(12, 74, 110, 0.45);
+    --info-text: #7DD3FC;
+    --info-border: #0C4A6E;
+}
+
+/* Explicit Dark Mode Overrides for Crisp Contrast */
+html.dark, html.dark body {
+    background-color: #0B1120 !important;
+    color: #CBD5E1 !important;
+}
+
+html.dark .credential-bar {
+    background-color: #041D16 !important;
+    border-bottom: 1px solid #064E3B !important;
+}
+
+html.dark .credential-bar span,
+html.dark .credential-bar a {
+    color: #6EE7B7 !important;
+}
+
+html.dark .credential-bar .badge-pulse {
+    background-color: #10B981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35);
+}
+
+html.dark .main-header {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    border-bottom-color: #1E293B !important;
+}
+
+html.dark .brand-title {
+    color: #F8FAFC !important;
+}
+
+html.dark .badge-ver {
+    background-color: rgba(6, 78, 59, 0.4) !important;
+    border-color: #065F46 !important;
+    color: #6EE7B7 !important;
+}
+
+html.dark nav.bg-slate-100\/80 {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+}
+
+html.dark .nav-tab {
+    color: #94A3B8 !important;
+}
+
+html.dark .nav-tab:hover {
+    color: #F8FAFC !important;
+    background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+html.dark .nav-tab.active {
+    color: #34D399 !important;
+    background-color: #131E31 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .lang-switch-wrapper,
+html.dark .theme-switch-wrapper {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+}
+
+html.dark .lang-btn,
+html.dark .theme-btn {
+    color: #94A3B8 !important;
+}
+
+html.dark .lang-btn:hover,
+html.dark .theme-btn:hover {
+    color: #F8FAFC !important;
+}
+
+html.dark .lang-btn.active,
+html.dark .theme-btn.active {
+    background-color: #131E31 !important;
+    color: #34D399 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .mobile-nav-panel {
+    background-color: #0F172A !important;
+    border-top-color: #1E293B !important;
+}
+
+html.dark .mobile-nav-link {
+    color: #CBD5E1 !important;
+}
+
+html.dark .mobile-nav-link:hover {
+    background-color: #1E293B !important;
+    color: #FFFFFF !important;
+}
+
+html.dark .mobile-nav-link.active {
+    background-color: #064E3B !important;
+    color: #A7F3D0 !important;
+}
+
+/* Card Surfaces */
+html.dark .card-panel {
+    background-color: #131E31 !important;
+    border-color: #1E293B !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.dark .card-panel h2,
+html.dark .card-panel h3,
+html.dark .card-panel h4 {
+    color: #F8FAFC !important;
+}
+
+/* Form Controls & Inputs */
+html.dark .form-label {
+    color: #E2E8F0 !important;
+}
+
+html.dark .form-input,
+html.dark .form-select {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+    color: #F8FAFC !important;
+}
+
+html.dark .form-input:focus,
+html.dark .form-select:focus {
+    border-color: #10B981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+}
+
+html.dark .form-select option {
+    background-color: #131E31 !important;
+    color: #F8FAFC !important;
+}
+
+html.dark .input-unit-badge {
+    color: #64748B !important;
+}
+
+html.dark .segmented-control {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+}
+
+html.dark .seg-btn {
+    color: #94A3B8 !important;
+}
+
+html.dark .segmented-control .seg-item input[type="radio"]:checked + .seg-btn {
+    background-color: #131E31 !important;
+    color: #34D399 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .btn-chip-age {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+    color: #CBD5E1 !important;
+}
+
+html.dark .btn-chip-age:hover {
+    background-color: #064E3B !important;
+    border-color: #059669 !important;
+    color: #6EE7B7 !important;
+}
+
+html.dark .btn-secondary {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+    color: #E2E8F0 !important;
+}
+
+html.dark .btn-secondary:hover {
+    background-color: #2A3A54 !important;
+    color: #FFFFFF !important;
+}
+
+/* Results Card & Gauges */
+html.dark #results-card {
+    background-color: #131E31 !important;
+    border-color: #1E293B !important;
+}
+
+html.dark #res-child-header {
+    color: #F8FAFC !important;
+}
+
+html.dark .border-b.border-slate-100 {
+    border-bottom-color: #1E293B !important;
+}
+
+html.dark .metric-box {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+}
+
+html.dark .metric-box span.text-slate-600 {
+    color: #E2E8F0 !important;
+}
+
+html.dark .metric-box span.text-slate-900,
+html.dark .metric-box strong {
+    color: #F8FAFC !important;
+}
+
+html.dark .metric-box .border-t {
+    border-top-color: #2A3A54 !important;
+}
+
+html.dark .zscore-track {
+    background-color: #2A3A54 !important;
+}
+
+html.dark .zscore-marker {
+    background-color: #F8FAFC !important;
+    border-color: #0B1120 !important;
+}
+
+html.dark #res-summary-box.bg-emerald-50\/60 {
+    background-color: rgba(6, 78, 59, 0.35) !important;
+    border-color: rgba(5, 150, 105, 0.5) !important;
+    color: #D1FAE5 !important;
+}
+
+html.dark #res-summary-box.bg-amber-50\/60 {
+    background-color: rgba(120, 53, 15, 0.35) !important;
+    border-color: rgba(180, 83, 9, 0.5) !important;
+    color: #FEF3C7 !important;
+}
+
+html.dark #res-summary-box.bg-rose-50\/60 {
+    background-color: rgba(136, 19, 55, 0.35) !important;
+    border-color: rgba(225, 29, 72, 0.5) !important;
+    color: #FFE4E6 !important;
+}
+
+html.dark #res-summary-headline {
+    color: #F8FAFC !important;
+}
+
+html.dark #res-summary-desc {
+    color: #CBD5E1 !important;
+}
+
+html.dark .rec-item {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+    color: #E2E8F0 !important;
+}
+
+/* KPI Cards */
+html.dark .kpi-card {
+    background-color: #131E31 !important;
+    border-color: #1E293B !important;
+}
+
+html.dark .kpi-card .text-slate-900 {
+    color: #F8FAFC !important;
+}
+
+html.dark .kpi-card .text-slate-500 {
+    color: #94A3B8 !important;
+}
+
+/* Dataset Table */
+html.dark table thead {
+    background-color: #0F172A !important;
+    border-bottom-color: #1E293B !important;
+}
+
+html.dark table thead th {
+    color: #94A3B8 !important;
+    border-bottom-color: #1E293B !important;
+}
+
+html.dark table tbody {
+    background-color: #131E31 !important;
+}
+
+html.dark table tbody tr {
+    border-bottom-color: #1E293B !important;
+}
+
+html.dark table tbody tr:hover {
+    background-color: #1A263D !important;
+}
+
+html.dark table tbody td {
+    color: #CBD5E1 !important;
+}
+
+html.dark .btn-page {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+    color: #CBD5E1 !important;
+}
+
+html.dark .btn-page:hover:not(:disabled) {
+    background-color: #2A3A54 !important;
+    color: #FFFFFF !important;
+}
+
+html.dark #table-page-label {
+    color: #E2E8F0 !important;
+}
+
+/* Guidelines Tab */
+html.dark #tab-guidelines .text-slate-700 {
+    color: #CBD5E1 !important;
+}
+
+html.dark #tab-guidelines .text-slate-900 {
+    color: #F8FAFC !important;
+}
+
+html.dark #tab-guidelines .border-slate-100 {
+    border-color: #1E293B !important;
+}
+
+html.dark .hpk-card {
+    background-color: #1A263D !important;
+    border-color: #2A3A54 !important;
+}
+
+/* Modal */
+html.dark #info-modal .bg-white {
+    background-color: #131E31 !important;
+    border: 1px solid #1E293B !important;
+    color: #F8FAFC !important;
+}
+
+html.dark #info-modal .text-slate-900 {
+    color: #F8FAFC !important;
+}
+
+html.dark #info-modal .text-slate-600,
+html.dark #info-modal .text-slate-700 {
+    color: #CBD5E1 !important;
+}
+
+html.dark #info-modal .border-b,
+html.dark #info-modal .border-t {
+    border-color: #1E293B !important;
+}
+
+/* Footer */
+html.dark .main-footer {
+    background-color: #070B14 !important;
+    border-top-color: #1E293B !important;
+    color: #64748B !important;
+}
+
+html.dark .main-footer strong {
+    color: #CBD5E1 !important;
 }
