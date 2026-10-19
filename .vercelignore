@@ -1,0 +1,6 @@
+src/
+data/
+*.py
+*.docx
+*.pdf
+__pycache__/
