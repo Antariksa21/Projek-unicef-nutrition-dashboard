@@ -54,7 +54,7 @@ Stunting-Prediction/
 │   ├── generate_data.py     # Deterministic socio-economic data generator
 │   └── NUTRITION_CLEAN.csv  # Cleaned UNICEF Indonesia dataset
 ├── src/
-│   └── app.py               # Streamlit interactive application (Python version)
+│   └── streamlit_app.py     # Streamlit interactive application (Python version)
 └── README.md                # Technical Documentation
 ```
 
@@ -75,7 +75,7 @@ To run the Streamlit version locally:
 pip install streamlit pandas plotly
 
 # 2. Run the application
-streamlit run src/app.py
+streamlit run src/streamlit_app.py
 ```
 Open `http://localhost:8501` in your browser.
 
